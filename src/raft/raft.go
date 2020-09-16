@@ -88,7 +88,6 @@ type Raft struct {
 	// In election
 	electionTimer *time.Ticker
 	votesReceived int
-	inElection    bool
 }
 
 func randomElectionTimeout() int {
@@ -110,12 +109,11 @@ func (rf *Raft) init() {
 	rf.votesReceived = 0
 	rf.nextIndex = make([]int, len(rf.peers))
 	rf.matchIndex = make([]int, len(rf.peers))
-	rf.inElection = false
-	rf.electionTimer = time.NewTicker(time.Duration(randomElectionTimeout()) * time.Millisecond)
 	go rf.electionTiming()
 }
 
 func (rf *Raft) electionTiming() {
+	rf.electionTimer = time.NewTicker(time.Duration(randomElectionTimeout()) * time.Millisecond)
 	for {
 		if rf.killed() {
 			fmt.Println("Done!")
@@ -124,40 +122,53 @@ func (rf *Raft) electionTiming() {
 		select {
 		case t := <-rf.electionTimer.C:
 			fmt.Println("Current time: ", t)
-			rf.startElection()
+			rf.mayStartElection()
 		}
+	}
+}
+
+func (rf *Raft) sendHeartBeat() {
+	for {
+		for i := range rf.peers {
+			req := &AppendEntriesRequest{}
+			resp := &AppendEntriesResponse{}
+			go func(server int) {
+				rf.peers[server].Call("Raft.AppendEntries", req, resp)
+			}(i)
+		}
+		time.Sleep(5 * time.Millisecond)
 	}
 }
 
 func (rf *Raft) requestVote(peer int) {
-	req := RequestVoteArgs{rf.currentTerm, rf.me, rf.commitIndex, rf.log[rf.commitIndex].term}
-	resp := RequestVoteReply{}
-	if rf.sendRequestVote(peer, &req, &resp) {
-		if rf.inElection && resp.voteGranted {
+	req := &VoteRequest{rf.currentTerm, rf.me, rf.commitIndex, rf.log[rf.commitIndex].term}
+	resp := &VoteResponse{}
+	if rf.sendRequestVote(peer, req, resp) {
+		if resp.VoteGranted {
 			rf.mu.Lock()
+			defer rf.mu.Unlock()
 			rf.votesReceived++
-			if rf.votesReceived > len(rf.peers) {
+			// Convert to leader if votes received from majority.
+			if rf.isLeader == false && rf.votesReceived > len(rf.peers) {
 				rf.isLeader = true
-				rf.inElection = false
-				rf.votesReceived = 0
-				// Should it stop?
-				rf.electionTimer.Stop()
+				go rf.sendHeartBeat()
 			}
-			rf.mu.Unlock()
 		}
 	}
 }
 
-func (rf *Raft) startElection() {
+func (rf *Raft) mayStartElection() {
 	rf.mu.Lock()
-	rf.inElection = true
+	defer rf.mu.Unlock()
+	if rf.isLeader {
+		return
+	}
 	rf.currentTerm++
 	rf.votedFor = rf.me
-	rf.votesReceived++
+	rf.votesReceived = 1
 	for index := range rf.peers {
 		go rf.requestVote(index)
 	}
-	rf.mu.Unlock()
 }
 
 // return currentTerm and whether this server
@@ -205,47 +216,39 @@ func (rf *Raft) readPersist(data []byte) {
 	// }
 }
 
-//
-// example RequestVote RPC arguments structure.
-// field names must start with capital letters!
-//
-type RequestVoteArgs struct {
+// VoteRequest RPC request.
+type VoteRequest struct {
 	// Your data here (2A, 2B).
-	term         int
-	candidateID  int
-	lastLogIndex int
-	lastLogTerm  int
+	Term         int
+	CandidateID  int
+	LastLogIndex int
+	LastLogTerm  int
 }
 
-//
-// example RequestVote RPC reply structure.
-// field names must start with capital letters!
-//
-type RequestVoteReply struct {
+// VoteResponse RPC response.
+type VoteResponse struct {
 	// Your data here (2A).
-	term        int
-	voteGranted bool
+	Term        int
+	VoteGranted bool
 }
 
-//
-// example RequestVote RPC handler.
-//
-func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
+// RequestVote RPC handler.
+func (rf *Raft) RequestVote(args *VoteRequest, reply *VoteResponse) {
 	// Your code here (2A, 2B).
-
-	if rf.votedFor != -1 {
-		reply.voteGranted = false
+	rf.electionTimer.Reset(time.Duration(randomElectionTimeout()) * time.Millisecond)
+	if rf.votedFor != -1 || args.Term < rf.currentTerm {
+		reply.VoteGranted = false
 		return
 	}
 
-	if rf.currentTerm > args.term || rf.commitIndex > args.lastLogIndex || rf.log[rf.commitIndex].term > args.lastLogTerm {
-		reply.voteGranted = false
+	if rf.commitIndex >= args.LastLogIndex || rf.log[rf.commitIndex].term >= args.LastLogTerm {
+		reply.VoteGranted = false
 		return
 	}
 
-	rf.votedFor = args.candidateID
-	reply.term = rf.currentTerm
-	reply.voteGranted = true
+	rf.votedFor = args.CandidateID
+	reply.Term = rf.currentTerm
+	reply.VoteGranted = true
 }
 
 //
@@ -277,9 +280,23 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 // that the caller passes the address of the reply struct with &, not
 // the struct itself.
 //
-func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
+func (rf *Raft) sendRequestVote(server int, args *VoteRequest, reply *VoteResponse) bool {
 	ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
 	return ok
+}
+
+// AppendEntriesRequest RPC request.
+type AppendEntriesRequest struct {
+}
+
+// AppendEntriesResponse RPC request.
+type AppendEntriesResponse struct {
+}
+
+// AppendEntries RPC handler.
+func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesResponse) {
+	fmt.Println("AppendEntries received.")
+	rf.electionTimer.Reset(time.Duration(randomElectionTimeout()) * time.Millisecond)
 }
 
 //
