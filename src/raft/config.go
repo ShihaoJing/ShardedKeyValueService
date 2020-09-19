@@ -224,7 +224,7 @@ func (cfg *config) checkTimeout() {
 func (cfg *config) cleanup() {
 	for i := 0; i < len(cfg.rafts); i++ {
 		if cfg.rafts[i] != nil {
-			cfg.rafts[i].Kill()
+			//cfg.rafts[i].Kill()
 		}
 	}
 	cfg.net.Cleanup()
@@ -233,7 +233,7 @@ func (cfg *config) cleanup() {
 
 // attach server i to the net.
 func (cfg *config) connect(i int) {
-	// fmt.Printf("connect(%d)\n", i)
+	fmt.Printf("connect(%d)\n", i)
 
 	cfg.connected[i] = true
 
@@ -256,7 +256,7 @@ func (cfg *config) connect(i int) {
 
 // detach server i from the net.
 func (cfg *config) disconnect(i int) {
-	// fmt.Printf("disconnect(%d)\n", i)
+	fmt.Printf("disconnect(%d)\n", i)
 
 	cfg.connected[i] = false
 
