@@ -33,16 +33,18 @@ const TimeOutMillSeconds = 150
 const NilCandidateID = -1
 
 const (
+	// Follower current server is a follower
 	Follower = iota
+	// Candidate current server is a candidate
 	Candidate
+	// Leader current server is a leader
 	Leader
 )
 
 // import "bytes"
 // import "../labgob"
 
-//
-// as each Raft peer becomes aware that successive log entries are
+// ApplyMsg as each Raft peer becomes aware that successive log entries are
 // committed, the peer should send an ApplyMsg to the service (or
 // tester) on the same server, via the applyCh passed to Make(). set
 // CommandValid to true to indicate that the ApplyMsg contains a newly
@@ -58,14 +60,13 @@ type ApplyMsg struct {
 	CommandIndex int
 }
 
-// CommandLog Command log
+// Log Command log
 type Log struct {
 	term    int
 	Command interface{}
 }
 
-//
-// A Go object implementing a single Raft peer.
+// Raft A Go object implementing a single Raft peer.
 //
 type Raft struct {
 	mu        sync.Mutex          // Lock to protect shared access to this peer's state
@@ -190,6 +191,10 @@ func (rf *Raft) requestVote2(server int, req *VoteRequest) {
 		if resp.VoteGranted {
 			rf.mu.Lock()
 			defer rf.mu.Unlock()
+			if resp.Term != rf.currentTerm {
+				DPrintf("Candidate %d received outdated vote: %d\n", rf.me, rf.votesReceived)
+				return
+			}
 			rf.votesReceived++
 			DPrintf("Candidate %d votes received: %d\n", rf.me, rf.votesReceived)
 			if rf.state == Candidate && rf.votesReceived > len(rf.peers)/2 {
@@ -201,7 +206,7 @@ func (rf *Raft) requestVote2(server int, req *VoteRequest) {
 	}
 }
 
-// return currentTerm and whether this server
+// GetState return currentTerm and whether this server
 // believes it is the leader.
 func (rf *Raft) GetState() (int, bool) {
 	// Your code here (2A).
@@ -269,26 +274,28 @@ func (rf *Raft) RequestVote(args *VoteRequest, reply *VoteResponse) {
 	// // Your code here (2A, 2B).
 	// DPrintf("Peer %d received request: %+v\n", rf.me, args)
 	// DPrintf("Peer %d state: voted for[%d], term[%d], commit_index[%d], last_log_term[%d]\n", rf.me, rf.votedFor, rf.currentTerm, rf.commitIndex, rf.log[rf.commitIndex].term)
-	rf.heartbeat <- true
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 	// Deny vote if:
 	// 1. Request is from a lower term.
 	// 2. Current peer is the leader. Note: Heartbeat can convert a stale leader to a follower.
 	if rf.currentTerm > args.Term || rf.state == Leader {
+		reply.Term = rf.currentTerm
 		reply.VoteGranted = false
 		return
 	}
 
 	if rf.currentTerm <= args.Term {
 		if rf.commitIndex > args.LastLogIndex || rf.log[rf.commitIndex].term > args.LastLogTerm {
+			reply.Term = rf.currentTerm
 			reply.VoteGranted = false
 		} else {
-			reply.Term = rf.currentTerm
-			reply.VoteGranted = true
+			rf.heartbeat <- true
 			rf.state = Follower
 			rf.votedFor = args.CandidateID
 			rf.currentTerm = args.Term
+			reply.Term = rf.currentTerm
+			reply.VoteGranted = true
 		}
 		return
 	}
@@ -344,13 +351,13 @@ type AppendEntriesResponse struct {
 // AppendEntries RPC handler.
 func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesResponse) {
 	DPrintf("Peer [%d] received AppendEntries request: %+v\n", rf.me, args)
-	rf.heartbeat <- true
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
 	if args.Term < rf.currentTerm {
 		// Ignore if received from a old leader
 		return
 	}
+	rf.heartbeat <- true
 	if args.Term > rf.currentTerm || rf.votedFor != args.LeaderID {
 		// Follow new leader
 		// TODO: catch up log
@@ -363,8 +370,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesRe
 	// TODO: append log
 }
 
-//
-// the service using Raft (e.g. a k/v server) wants to start
+// Start the service using Raft (e.g. a k/v server) wants to start
 // agreement on the next command to be appended to Raft's log. if this
 // server isn't the leader, returns false. otherwise start the
 // agreement and return immediately. there is no guarantee that this
@@ -387,8 +393,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	return index, term, isLeader
 }
 
-//
-// the tester doesn't halt goroutines created by Raft after each test,
+// Kill the tester doesn't halt goroutines created by Raft after each test,
 // but it does call the Kill() method. your code can use killed() to
 // check whether Kill() has been called. the use of atomic avoids the
 // need for a lock.
@@ -408,8 +413,7 @@ func (rf *Raft) killed() bool {
 	return z == 1
 }
 
-//
-// the service or tester wants to create a Raft server. the ports
+// Make the service or tester wants to create a Raft server. the ports
 // of all the Raft servers (including this one) are in peers[]. this
 // server's port is peers[me]. all the servers' peers[] arrays
 // have the same order. persister is a place for this server to
