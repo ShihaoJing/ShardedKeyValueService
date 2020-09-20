@@ -444,6 +444,7 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 			if rf != nil {
 				index1, _, ok := rf.Start(cmd)
 				if ok {
+					DPrintf(1, "@@@Tester@@@ Leader[%d] received at %d\n", rf.me, index1)
 					index = index1
 					break
 				}
@@ -463,6 +464,7 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 						return index
 					}
 				}
+				DPrintf(1, "@@@Tester@@@ checking [%d], %+v\n", nd, cmd1)
 				time.Sleep(20 * time.Millisecond)
 			}
 			if retry == false {
