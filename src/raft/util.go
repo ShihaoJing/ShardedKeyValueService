@@ -23,3 +23,11 @@ func Max(x, y int) int {
 	}
 	return y
 }
+
+// Min integer version of math.Min
+func Min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}

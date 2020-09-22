@@ -1,0 +1,646 @@
+2020/09/22 14:14:33.343117 Disconnect(0)
+2020/09/22 14:14:33.343355 Disconnect(1)
+2020/09/22 14:14:33.343392 Disconnect(2)
+2020/09/22 14:14:33.343405 Server [0] timeout duration: [301] ms
+2020/09/22 14:14:33.343428 Disconnect(3)
+2020/09/22 14:14:33.343456 Server [1] timeout duration: [349] ms
+2020/09/22 14:14:33.343483 Server [2] timeout duration: [378] ms
+2020/09/22 14:14:33.343520 Server [3] timeout duration: [370] ms
+2020/09/22 14:14:33.343537 Disconnect(4)
+2020/09/22 14:14:33.343589 Connect(0)
+2020/09/22 14:14:33.343596 Connect(1)
+2020/09/22 14:14:33.343600 Connect(2)
+2020/09/22 14:14:33.343604 Connect(3)
+2020/09/22 14:14:33.343609 Connect(4)
+Test (2B): no agreement if too many followers disconnect ...
+2020/09/22 14:14:33.343637 Server [4] timeout duration: [413] ms
+2020/09/22 14:14:33.647883 Peer [0] timout. Converts to candidate at new term [1].
+2020/09/22 14:14:33.648063 Candidate [0] sending vote request to peer [2]
+2020/09/22 14:14:33.648154 Candidate [0] sending vote request to peer [3]
+2020/09/22 14:14:33.648211 Candidate [0] sending vote request to peer [1]
+2020/09/22 14:14:33.648282 Candidate [0] sending vote request to peer [4]
+2020/09/22 14:14:33.648883 Candidate [0] received vote response from peer [4]: {Term:1 VoteGranted:true}
+2020/09/22 14:14:33.648914 Candidate [0] received vote response from peer [3]: {Term:1 VoteGranted:true}
+2020/09/22 14:14:33.648886 Candidate [0] received vote response from peer [2]: {Term:1 VoteGranted:true}
+2020/09/22 14:14:33.648900 Candidate [0] received vote response from peer [1]: {Term:1 VoteGranted:true}
+2020/09/22 14:14:33.668598 Candidate [0] received total [5] votes before timeout.
+2020/09/22 14:14:33.668640 ***** Candidate [0] converts to leader *****
+2020/09/22 14:14:33.706903 @@@Tester@@@ Leader[0] received at 1: command [10]
+2020/09/22 14:14:33.719025 Server [0]'s nextIndex: [1 1 1 1 1]
+2020/09/22 14:14:33.719116 Leader [0] sending [1]th entry to peer [3]: &{EventID:1600809273719067 LeaderID:0 Term:1 PrevLogIndex:0 PrevLogTerm:0 Entries:[{Term:1 Command:10}] LeaderCommitIndex:0}
+2020/09/22 14:14:33.719163 Server [0]'s nextIndex: [1 1 1 1 1]
+2020/09/22 14:14:33.719234 Leader [0] sending [1]th entry to peer [2]: &{EventID:1600809273719187 LeaderID:0 Term:1 PrevLogIndex:0 PrevLogTerm:0 Entries:[{Term:1 Command:10}] LeaderCommitIndex:0}
+2020/09/22 14:14:33.719288 Server [0]'s nextIndex: [1 1 1 1 1]
+2020/09/22 14:14:33.719338 Leader [0] sending [1]th entry to peer [1]: &{EventID:1600809273719310 LeaderID:0 Term:1 PrevLogIndex:0 PrevLogTerm:0 Entries:[{Term:1 Command:10}] LeaderCommitIndex:0}
+2020/09/22 14:14:33.719387 Server [0]'s nextIndex: [1 1 1 1 1]
+2020/09/22 14:14:33.719417 Leader [0] received response from server [3]: &{EventID:1600809273719067 Term:1 Success:true}
+2020/09/22 14:14:33.719441 Leader [0] sending [1]th entry to peer [4]: &{EventID:1600809273719408 LeaderID:0 Term:1 PrevLogIndex:0 PrevLogTerm:0 Entries:[{Term:1 Command:10}] LeaderCommitIndex:0}
+2020/09/22 14:14:33.719443 Leader [0] received response from server [2]: &{EventID:1600809273719187 Term:1 Success:true}
+2020/09/22 14:14:33.719484 Leader [0] replicating [1]th entry to peer [2] succeed: {Term:1 Command:10}
+2020/09/22 14:14:33.719493 Leader [0] replicating [1]th entry to peer [3] succeed: {Term:1 Command:10}
+2020/09/22 14:14:33.719564 Leader [0] received response from server [1]: &{EventID:1600809273719310 Term:1 Success:true}
+2020/09/22 14:14:33.719584 Leader [0] replicating [1]th entry to peer [1] succeed: {Term:1 Command:10}
+2020/09/22 14:14:33.719655 Leader [0] received response from server [4]: &{EventID:1600809273719408 Term:1 Success:true}
+2020/09/22 14:14:33.719672 Leader [0] replicating [1]th entry to peer [4] succeed: {Term:1 Command:10}
+2020/09/22 14:14:33.771452 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.771546 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809273771535 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.771609 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.771656 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809273771647 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.771759 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.771783 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809273771777 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.771817 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.771856 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809273771847 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.771968 Leader [0] received response from server [4]: &{EventID:1600809273771535 Term:1 Success:true}
+2020/09/22 14:14:33.771998 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.772041 Leader [0] received response from server [2]: &{EventID:1600809273771777 Term:1 Success:true}
+2020/09/22 14:14:33.772062 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.772116 Leader [0] received response from server [3]: &{EventID:1600809273771647 Term:1 Success:true}
+2020/09/22 14:14:33.772144 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.772201 Leader [0] received response from server [1]: &{EventID:1600809273771847 Term:1 Success:true}
+2020/09/22 14:14:33.772226 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.820563 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.820683 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809273820671 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.820752 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.820794 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809273820785 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.820846 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.820886 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809273820877 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.820957 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.820998 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809273820986 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:0}
+2020/09/22 14:14:33.821057 Leader [0] received response from server [3]: &{EventID:1600809273820671 Term:1 Success:true}
+2020/09/22 14:14:33.821082 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.821141 Leader [0] received response from server [4]: &{EventID:1600809273820785 Term:1 Success:true}
+2020/09/22 14:14:33.821174 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.821187 Leader [0] received response from server [2]: &{EventID:1600809273820877 Term:1 Success:true}
+2020/09/22 14:14:33.821197 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.821312 Leader [0] received response from server [1]: &{EventID:1600809273820986 Term:1 Success:true}
+2020/09/22 14:14:33.821336 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.845385 Server [0] incrementing commitIndex to [1]
+2020/09/22 14:14:33.845440 Server [0] commiting log at index[1]: {Term:1 Command:10}
+2020/09/22 14:14:33.869517 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.869567 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809273869557 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.869646 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.869667 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809273869661 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.869722 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.869811 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809273869785 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.869846 Peer [3] found new commit index [1]
+2020/09/22 14:14:33.869881 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.869926 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809273869913 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.869954 Peer [4] found new commit index [1]
+2020/09/22 14:14:33.869990 Leader [0] received response from server [3]: &{EventID:1600809273869557 Term:1 Success:true}
+2020/09/22 14:14:33.870012 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.870014 Peer [2] found new commit index [1]
+2020/09/22 14:14:33.870090 Leader [0] received response from server [4]: &{EventID:1600809273869661 Term:1 Success:true}
+2020/09/22 14:14:33.870113 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.870129 Leader [0] received response from server [2]: &{EventID:1600809273869785 Term:1 Success:true}
+2020/09/22 14:14:33.870138 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.870148 Peer [1] found new commit index [1]
+2020/09/22 14:14:33.870246 Leader [0] received response from server [1]: &{EventID:1600809273869913 Term:1 Success:true}
+2020/09/22 14:14:33.870261 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.920297 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.920418 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809273920406 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.920482 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.920526 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809273920517 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.920586 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.920624 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809273920616 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.920665 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.920706 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809273920698 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.920814 Leader [0] received response from server [3]: &{EventID:1600809273920517 Term:1 Success:true}
+2020/09/22 14:14:33.920836 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.920840 Leader [0] received response from server [2]: &{EventID:1600809273920406 Term:1 Success:true}
+2020/09/22 14:14:33.920880 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.920907 Leader [0] received response from server [1]: &{EventID:1600809273920616 Term:1 Success:true}
+2020/09/22 14:14:33.920930 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.921042 Leader [0] received response from server [4]: &{EventID:1600809273920698 Term:1 Success:true}
+2020/09/22 14:14:33.921059 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.945355 Server [4] commiting log at index[1]: {Term:1 Command:10}
+2020/09/22 14:14:33.945356 Server [1] commiting log at index[1]: {Term:1 Command:10}
+2020/09/22 14:14:33.945566 Server [3] commiting log at index[1]: {Term:1 Command:10}
+2020/09/22 14:14:33.945585 Server [2] commiting log at index[1]: {Term:1 Command:10}
+2020/09/22 14:14:33.969101 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.969142 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809273969135 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.969162 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.969191 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809273969188 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.969251 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.969275 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809273969270 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.969306 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:33.969336 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809273969331 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:33.969380 Leader [0] received response from server [3]: &{EventID:1600809273969188 Term:1 Success:true}
+2020/09/22 14:14:33.969393 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.969432 Leader [0] received response from server [4]: &{EventID:1600809273969135 Term:1 Success:true}
+2020/09/22 14:14:33.969441 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.969482 Leader [0] received response from server [2]: &{EventID:1600809273969270 Term:1 Success:true}
+2020/09/22 14:14:33.969497 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:33.969504 Leader [0] received response from server [1]: &{EventID:1600809273969331 Term:1 Success:true}
+2020/09/22 14:14:33.969508 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.018857 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.018940 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274018922 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.019021 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.019067 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274019058 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.019146 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.019180 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274019172 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.019217 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.019254 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274019246 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.019336 Leader [0] received response from server [3]: &{EventID:1600809274018922 Term:1 Success:true}
+2020/09/22 14:14:34.019364 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.019413 Leader [0] received response from server [2]: &{EventID:1600809274019058 Term:1 Success:true}
+2020/09/22 14:14:34.019443 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.019462 Leader [0] received response from server [1]: &{EventID:1600809274019172 Term:1 Success:true}
+2020/09/22 14:14:34.019480 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.019544 Leader [0] received response from server [4]: &{EventID:1600809274019246 Term:1 Success:true}
+2020/09/22 14:14:34.019560 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.069581 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.069670 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274069661 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.069762 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.069804 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274069785 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.069840 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.069870 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274069864 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.069948 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.069975 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274069967 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.069990 Leader [0] received response from server [1]: &{EventID:1600809274069661 Term:1 Success:true}
+2020/09/22 14:14:34.070013 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.070022 Leader [0] received response from server [3]: &{EventID:1600809274069785 Term:1 Success:true}
+2020/09/22 14:14:34.070029 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.070170 Leader [0] received response from server [2]: &{EventID:1600809274069864 Term:1 Success:true}
+2020/09/22 14:14:34.070197 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.070208 Leader [0] received response from server [4]: &{EventID:1600809274069967 Term:1 Success:true}
+2020/09/22 14:14:34.070214 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.118781 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.118901 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274118887 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.118961 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.119006 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274118998 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.119074 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.119103 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274119094 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.119180 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.119219 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274119207 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.119251 Leader [0] received response from server [3]: &{EventID:1600809274118887 Term:1 Success:true}
+2020/09/22 14:14:34.119282 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.119379 Leader [0] received response from server [1]: &{EventID:1600809274119094 Term:1 Success:true}
+2020/09/22 14:14:34.119401 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.119420 Leader [0] received response from server [2]: &{EventID:1600809274118998 Term:1 Success:true}
+2020/09/22 14:14:34.119429 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.119510 Leader [0] received response from server [4]: &{EventID:1600809274119207 Term:1 Success:true}
+2020/09/22 14:14:34.119525 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.168745 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.168796 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274168787 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.168852 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.168882 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274168875 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.168932 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.168965 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274168957 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.169006 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.169035 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274169029 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.169070 Leader [0] received response from server [3]: &{EventID:1600809274168787 Term:1 Success:true}
+2020/09/22 14:14:34.169090 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.169159 Leader [0] received response from server [1]: &{EventID:1600809274168875 Term:1 Success:true}
+2020/09/22 14:14:34.169170 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.169225 Leader [0] received response from server [2]: &{EventID:1600809274168957 Term:1 Success:true}
+2020/09/22 14:14:34.169243 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.169256 Leader [0] received response from server [4]: &{EventID:1600809274169029 Term:1 Success:true}
+2020/09/22 14:14:34.169264 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.220069 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.220212 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274220196 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.220253 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.220288 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274220280 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.220316 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.220383 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274220372 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.220453 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.220524 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274220510 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.220743 Leader [0] received response from server [4]: &{EventID:1600809274220196 Term:1 Success:true}
+2020/09/22 14:14:34.220775 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.220791 Leader [0] received response from server [1]: &{EventID:1600809274220372 Term:1 Success:true}
+2020/09/22 14:14:34.220824 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.220794 Leader [0] received response from server [3]: &{EventID:1600809274220280 Term:1 Success:true}
+2020/09/22 14:14:34.220873 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.220987 Leader [0] received response from server [2]: &{EventID:1600809274220510 Term:1 Success:true}
+2020/09/22 14:14:34.221004 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.273835 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.274002 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274273988 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.274069 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.274137 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274274106 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.274216 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.274268 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274274242 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.274326 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.274368 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274274356 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.274436 Leader [0] received response from server [4]: &{EventID:1600809274273988 Term:1 Success:true}
+2020/09/22 14:14:34.274460 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.274515 Leader [0] received response from server [3]: &{EventID:1600809274274106 Term:1 Success:true}
+2020/09/22 14:14:34.274586 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.274602 Leader [0] received response from server [2]: &{EventID:1600809274274242 Term:1 Success:true}
+2020/09/22 14:14:34.274612 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.274712 Leader [0] received response from server [1]: &{EventID:1600809274274356 Term:1 Success:true}
+2020/09/22 14:14:34.274736 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.321325 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.321462 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274321450 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.321523 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.321577 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274321564 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.321635 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.321671 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274321661 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.321755 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.321813 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274321786 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.321961 Leader [0] received response from server [3]: &{EventID:1600809274321450 Term:1 Success:true}
+2020/09/22 14:14:34.321996 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.321998 Leader [0] received response from server [4]: &{EventID:1600809274321661 Term:1 Success:true}
+2020/09/22 14:14:34.322037 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.322038 Leader [0] received response from server [2]: &{EventID:1600809274321564 Term:1 Success:true}
+2020/09/22 14:14:34.322076 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.322199 Leader [0] received response from server [1]: &{EventID:1600809274321786 Term:1 Success:true}
+2020/09/22 14:14:34.322225 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.372064 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.372187 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274372175 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.372249 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.372292 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274372283 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.372354 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.372388 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274372381 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.372430 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.372464 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274372456 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.372520 Leader [0] received response from server [2]: &{EventID:1600809274372175 Term:1 Success:true}
+2020/09/22 14:14:34.372546 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.372592 Leader [0] received response from server [3]: &{EventID:1600809274372283 Term:1 Success:true}
+2020/09/22 14:14:34.372646 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.372712 Leader [0] received response from server [1]: &{EventID:1600809274372381 Term:1 Success:true}
+2020/09/22 14:14:34.372727 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.372783 Leader [0] received response from server [4]: &{EventID:1600809274372456 Term:1 Success:true}
+2020/09/22 14:14:34.372805 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.419379 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.419432 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274419412 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.419468 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.419491 Leader [0] sending heartbeat entry to peer [3]: &{EventID:1600809274419486 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.419523 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.419541 Leader [0] sending heartbeat entry to peer [2]: &{EventID:1600809274419537 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.419565 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.419586 Leader [0] sending heartbeat entry to peer [1]: &{EventID:1600809274419581 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.419666 Leader [0] received response from server [4]: &{EventID:1600809274419412 Term:1 Success:true}
+2020/09/22 14:14:34.419695 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.419709 Leader [0] received response from server [3]: &{EventID:1600809274419486 Term:1 Success:true}
+2020/09/22 14:14:34.419719 Leader [0] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.419728 Leader [0] received response from server [2]: &{EventID:1600809274419537 Term:1 Success:true}
+2020/09/22 14:14:34.419735 Leader [0] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.419787 Leader [0] received response from server [1]: &{EventID:1600809274419581 Term:1 Success:true}
+2020/09/22 14:14:34.419795 Leader [0] replicating [2]th entry to peer [1] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.454985 Disconnect(1)
+2020/09/22 14:14:34.455174 Disconnect(2)
+2020/09/22 14:14:34.455227 Disconnect(3)
+2020/09/22 14:14:34.470377 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.470446 Leader [0] sending [2]th entry to peer [2]: &{EventID:1600809274470431 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:1 Command:20}] LeaderCommitIndex:1}
+2020/09/22 14:14:34.470495 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.470569 Leader [0] sending [2]th entry to peer [3]: &{EventID:1600809274470532 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:1 Command:20}] LeaderCommitIndex:1}
+2020/09/22 14:14:34.470636 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.470674 Leader [0] sending [2]th entry to peer [1]: &{EventID:1600809274470664 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:1 Command:20}] LeaderCommitIndex:1}
+2020/09/22 14:14:34.470732 Server [0]'s nextIndex: [1 2 2 2 2]
+2020/09/22 14:14:34.470771 Leader [0] sending [2]th entry to peer [4]: &{EventID:1600809274470761 LeaderID:0 Term:1 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:1 Command:20}] LeaderCommitIndex:1}
+2020/09/22 14:14:34.471208 Leader [0] received response from server [4]: &{EventID:1600809274470761 Term:1 Success:true}
+2020/09/22 14:14:34.471240 Leader [0] replicating [2]th entry to peer [4] succeed: {Term:1 Command:20}
+2020/09/22 14:14:34.518915 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.518997 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274518985 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.519339 Leader [0] received response from server [4]: &{EventID:1600809274518985 Term:1 Success:true}
+2020/09/22 14:14:34.519370 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.569504 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.569693 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274569681 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.570151 Leader [0] received response from server [4]: &{EventID:1600809274569681 Term:1 Success:true}
+2020/09/22 14:14:34.570187 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.620892 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.621044 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274620984 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.621385 Leader [0] received response from server [4]: &{EventID:1600809274620984 Term:1 Success:true}
+2020/09/22 14:14:34.621407 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.668945 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.669025 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274669014 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.669374 Leader [0] received response from server [4]: &{EventID:1600809274669014 Term:1 Success:true}
+2020/09/22 14:14:34.669395 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.718919 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.718961 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274718952 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.719153 Leader [0] received response from server [4]: &{EventID:1600809274718952 Term:1 Success:true}
+2020/09/22 14:14:34.719165 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.768928 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.769097 Peer [1] timout. Converts to candidate at new term [2].
+2020/09/22 14:14:34.769126 Candidate [1] sending vote request to peer [4]
+2020/09/22 14:14:34.769140 Candidate [1] sending vote request to peer [2]
+2020/09/22 14:14:34.769129 Candidate [1] sending vote request to peer [0]
+2020/09/22 14:14:34.769245 Candidate [1] sending vote request to peer [3]
+2020/09/22 14:14:34.769269 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274769097 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.769529 Leader [0] received response from server [4]: &{EventID:1600809274769097 Term:1 Success:true}
+2020/09/22 14:14:34.769551 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.789922 Peer [3] timout. Converts to candidate at new term [2].
+2020/09/22 14:14:34.789994 Candidate [3] sending vote request to peer [4]
+2020/09/22 14:14:34.790010 Candidate [1] received total [1] votes before timeout.
+2020/09/22 14:14:34.790047 Candidate [3] sending vote request to peer [1]
+2020/09/22 14:14:34.790082 Candidate [3] sending vote request to peer [0]
+2020/09/22 14:14:34.790153 Candidate [3] sending vote request to peer [2]
+2020/09/22 14:14:34.798160 Peer [2] timout. Converts to candidate at new term [2].
+2020/09/22 14:14:34.798248 Candidate [2] sending vote request to peer [0]
+2020/09/22 14:14:34.798324 Candidate [2] sending vote request to peer [4]
+2020/09/22 14:14:34.798388 Candidate [2] sending vote request to peer [1]
+2020/09/22 14:14:34.798433 Candidate [2] sending vote request to peer [3]
+2020/09/22 14:14:34.811630 Candidate [3] received total [1] votes before timeout.
+2020/09/22 14:14:34.818874 Candidate [2] received total [1] votes before timeout.
+2020/09/22 14:14:34.818997 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.819068 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274819056 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.819396 Leader [0] received response from server [4]: &{EventID:1600809274819056 Term:1 Success:true}
+2020/09/22 14:14:34.819428 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.868661 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.868697 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274868690 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.868885 Leader [0] received response from server [4]: &{EventID:1600809274868690 Term:1 Success:true}
+2020/09/22 14:14:34.868895 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.919224 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.919393 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274919378 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.919764 Leader [0] received response from server [4]: &{EventID:1600809274919378 Term:1 Success:true}
+2020/09/22 14:14:34.919786 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:34.969574 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:34.969634 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809274969622 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:34.969966 Leader [0] received response from server [4]: &{EventID:1600809274969622 Term:1 Success:true}
+2020/09/22 14:14:34.969987 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.018761 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.018844 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275018828 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.019192 Leader [0] received response from server [4]: &{EventID:1600809275018828 Term:1 Success:true}
+2020/09/22 14:14:35.019208 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.069220 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.069283 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275069271 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.069602 Leader [0] received response from server [4]: &{EventID:1600809275069271 Term:1 Success:true}
+2020/09/22 14:14:35.069623 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.117980 Peer [1] timout. Converts to candidate at new term [3].
+2020/09/22 14:14:35.118085 Candidate [1] sending vote request to peer [4]
+2020/09/22 14:14:35.118087 Candidate [1] sending vote request to peer [0]
+2020/09/22 14:14:35.118156 Candidate [1] sending vote request to peer [2]
+2020/09/22 14:14:35.118228 Candidate [1] sending vote request to peer [3]
+2020/09/22 14:14:35.118861 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.118925 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275118914 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.119269 Leader [0] received response from server [4]: &{EventID:1600809275118914 Term:1 Success:true}
+2020/09/22 14:14:35.119290 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.138581 Candidate [1] received total [1] votes before timeout.
+2020/09/22 14:14:35.160376 Peer [3] timout. Converts to candidate at new term [3].
+2020/09/22 14:14:35.160453 Candidate [3] sending vote request to peer [4]
+2020/09/22 14:14:35.160476 Candidate [3] sending vote request to peer [2]
+2020/09/22 14:14:35.160568 Candidate [3] sending vote request to peer [0]
+2020/09/22 14:14:35.160625 Candidate [3] sending vote request to peer [1]
+2020/09/22 14:14:35.168759 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.168815 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275168805 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.169167 Leader [0] received response from server [4]: &{EventID:1600809275168805 Term:1 Success:true}
+2020/09/22 14:14:35.169223 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.177340 Peer [2] timout. Converts to candidate at new term [3].
+2020/09/22 14:14:35.177375 Candidate [2] sending vote request to peer [4]
+2020/09/22 14:14:35.177390 Candidate [2] sending vote request to peer [3]
+2020/09/22 14:14:35.177461 Candidate [2] sending vote request to peer [0]
+2020/09/22 14:14:35.177517 Candidate [2] sending vote request to peer [1]
+2020/09/22 14:14:35.180650 Candidate [3] received total [1] votes before timeout.
+2020/09/22 14:14:35.197543 Candidate [2] received total [1] votes before timeout.
+2020/09/22 14:14:35.219024 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.219103 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275219091 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.219406 Leader [0] received response from server [4]: &{EventID:1600809275219091 Term:1 Success:true}
+2020/09/22 14:14:35.219427 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.268960 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.269101 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275269063 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.269473 Leader [0] received response from server [4]: &{EventID:1600809275269063 Term:1 Success:true}
+2020/09/22 14:14:35.269513 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.318756 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.318805 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275318796 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.319040 Leader [0] received response from server [4]: &{EventID:1600809275318796 Term:1 Success:true}
+2020/09/22 14:14:35.319054 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.369173 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.369348 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275369307 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.369688 Leader [0] received response from server [4]: &{EventID:1600809275369307 Term:1 Success:true}
+2020/09/22 14:14:35.369710 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.419427 Server [0]'s nextIndex: [1 2 2 2 3]
+2020/09/22 14:14:35.419516 Leader [0] sending heartbeat entry to peer [4]: &{EventID:1600809275419484 LeaderID:0 Term:1 PrevLogIndex:2 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.419893 Leader [0] received response from server [4]: &{EventID:1600809275419484 Term:1 Success:true}
+2020/09/22 14:14:35.419928 Leader [0] replicating [3]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.456587 Connect(1)
+2020/09/22 14:14:35.456719 Connect(2)
+2020/09/22 14:14:35.456734 Connect(3)
+2020/09/22 14:14:35.466787 Peer [1] timout. Converts to candidate at new term [4].
+2020/09/22 14:14:35.466883 Candidate [1] sending vote request to peer [2]
+2020/09/22 14:14:35.466942 Candidate [1] sending vote request to peer [3]
+2020/09/22 14:14:35.467029 Candidate [1] sending vote request to peer [4]
+2020/09/22 14:14:35.467076 Candidate [1] sending vote request to peer [0]
+2020/09/22 14:14:35.467372 Candidate [1] received vote response from peer [4]: {Term:4 VoteGranted:false}
+2020/09/22 14:14:35.467377 Candidate [1] received vote response from peer [3]: {Term:4 VoteGranted:true}
+2020/09/22 14:14:35.467377 Candidate [1] received vote response from peer [2]: {Term:4 VoteGranted:true}
+2020/09/22 14:14:35.467439 Candidate [1] received vote response from peer [0]: {Term:4 VoteGranted:false}
+2020/09/22 14:14:35.469035 Server [0] no longer a leader. Stop log replication.
+2020/09/22 14:14:35.487986 Candidate [1] received total [3] votes before timeout.
+2020/09/22 14:14:35.488086 ***** Candidate [1] converts to leader *****
+2020/09/22 14:14:35.539821 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.539877 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275539867 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.539973 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.540015 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275540007 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.540075 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.540109 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275540101 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.540156 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.540178 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275540172 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.540286 Leader [1] received response from server [0]: &{EventID:1600809275539867 Term:4 Success:true}
+2020/09/22 14:14:35.540319 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.540467 Leader [1] received response from server [2]: &{EventID:1600809275540101 Term:4 Success:true}
+2020/09/22 14:14:35.540505 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.540508 Leader [1] received response from server [4]: &{EventID:1600809275540172 Term:4 Success:true}
+2020/09/22 14:14:35.540527 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.540538 Leader [1] received response from server [3]: &{EventID:1600809275540007 Term:4 Success:true}
+2020/09/22 14:14:35.540546 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.588283 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.588360 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275588329 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.588425 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.588475 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275588462 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.588545 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.588589 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275588578 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.588636 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.588683 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275588674 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.588807 Leader [1] received response from server [3]: &{EventID:1600809275588329 Term:4 Success:true}
+2020/09/22 14:14:35.588844 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.588886 Leader [1] received response from server [4]: &{EventID:1600809275588578 Term:4 Success:true}
+2020/09/22 14:14:35.588909 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.588943 Leader [1] received response from server [2]: &{EventID:1600809275588462 Term:4 Success:true}
+2020/09/22 14:14:35.588986 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.589049 Leader [1] received response from server [0]: &{EventID:1600809275588674 Term:4 Success:true}
+2020/09/22 14:14:35.589074 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.639808 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.639965 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275639903 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.640033 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.640112 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275640103 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.640174 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.640213 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275640205 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.640269 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.640309 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275640297 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.640342 Leader [1] received response from server [3]: &{EventID:1600809275639903 Term:4 Success:true}
+2020/09/22 14:14:35.640367 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.640404 Leader [1] received response from server [0]: &{EventID:1600809275640103 Term:4 Success:true}
+2020/09/22 14:14:35.640425 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.640467 Leader [1] received response from server [4]: &{EventID:1600809275640205 Term:4 Success:true}
+2020/09/22 14:14:35.640489 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.640637 Leader [1] received response from server [2]: &{EventID:1600809275640297 Term:4 Success:true}
+2020/09/22 14:14:35.640660 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.688338 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.688426 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275688376 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.688460 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.688481 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275688477 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.688514 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.688533 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275688529 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.688558 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.688578 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275688571 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.688650 Leader [1] received response from server [0]: &{EventID:1600809275688477 Term:4 Success:true}
+2020/09/22 14:14:35.688661 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.688650 Leader [1] received response from server [3]: &{EventID:1600809275688376 Term:4 Success:true}
+2020/09/22 14:14:35.688671 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.688673 Leader [1] received response from server [4]: &{EventID:1600809275688529 Term:4 Success:true}
+2020/09/22 14:14:35.688690 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.688752 Leader [1] received response from server [2]: &{EventID:1600809275688571 Term:4 Success:true}
+2020/09/22 14:14:35.688764 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.739456 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.739614 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275739583 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.739669 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.739711 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275739702 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.739771 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.739820 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275739801 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.739919 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.739963 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275739955 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.740027 Leader [1] received response from server [3]: &{EventID:1600809275739583 Term:4 Success:true}
+2020/09/22 14:14:35.740057 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.740117 Leader [1] received response from server [0]: &{EventID:1600809275739702 Term:4 Success:true}
+2020/09/22 14:14:35.740141 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.740235 Leader [1] received response from server [4]: &{EventID:1600809275739801 Term:4 Success:true}
+2020/09/22 14:14:35.740267 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.740239 Leader [1] received response from server [2]: &{EventID:1600809275739955 Term:4 Success:true}
+2020/09/22 14:14:35.740291 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.788775 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.788936 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275788865 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.788992 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.789034 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275789025 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.789082 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.789123 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275789112 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.789185 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.789220 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275789212 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.789308 Leader [1] received response from server [3]: &{EventID:1600809275788865 Term:4 Success:true}
+2020/09/22 14:14:35.789330 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.789346 Leader [1] received response from server [0]: &{EventID:1600809275789025 Term:4 Success:true}
+2020/09/22 14:14:35.789360 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.789470 Leader [1] received response from server [4]: &{EventID:1600809275789112 Term:4 Success:true}
+2020/09/22 14:14:35.789500 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.789513 Leader [1] received response from server [2]: &{EventID:1600809275789212 Term:4 Success:true}
+2020/09/22 14:14:35.789522 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.838538 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.838702 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275838637 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.838792 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.838834 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275838825 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.838878 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.838913 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275838905 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.838959 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.838999 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275838987 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.839116 Leader [1] received response from server [3]: &{EventID:1600809275838637 Term:4 Success:true}
+2020/09/22 14:14:35.839145 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.839192 Leader [1] received response from server [4]: &{EventID:1600809275838905 Term:4 Success:true}
+2020/09/22 14:14:35.839213 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.839249 Leader [1] received response from server [0]: &{EventID:1600809275838825 Term:4 Success:true}
+2020/09/22 14:14:35.839266 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.839359 Leader [1] received response from server [2]: &{EventID:1600809275838987 Term:4 Success:true}
+2020/09/22 14:14:35.839373 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.888561 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.888624 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809275888612 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.888674 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.888717 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809275888708 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.888763 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.888798 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809275888790 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.888852 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.888887 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809275888879 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:35.889004 Leader [1] received response from server [3]: &{EventID:1600809275888708 Term:4 Success:true}
+2020/09/22 14:14:35.889027 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.889040 Leader [1] received response from server [0]: &{EventID:1600809275888612 Term:4 Success:true}
+2020/09/22 14:14:35.889055 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.889079 Leader [1] received response from server [2]: &{EventID:1600809275888790 Term:4 Success:true}
+2020/09/22 14:14:35.889101 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.889194 Leader [1] received response from server [4]: &{EventID:1600809275888879 Term:4 Success:true}
+2020/09/22 14:14:35.889210 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:35.932840 @@@Tester@@@ Leader[1] received at 3: command [1000]
+2020/09/22 14:14:35.938503 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.938569 Leader [1] sending [2]th entry to peer [3]: &{EventID:1600809275938555 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:4 Command:30}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.938631 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.938676 Leader [1] sending [2]th entry to peer [0]: &{EventID:1600809275938665 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:4 Command:30}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.938734 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.938789 Leader [1] sending [2]th entry to peer [4]: &{EventID:1600809275938761 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:4 Command:30}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.938842 Server [1]'s nextIndex: [2 2 2 2 2]
+2020/09/22 14:14:35.938879 Leader [1] sending [2]th entry to peer [2]: &{EventID:1600809275938869 LeaderID:1 Term:4 PrevLogIndex:1 PrevLogTerm:1 Entries:[{Term:4 Command:30}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.938961 Leader [1] received response from server [3]: &{EventID:1600809275938555 Term:4 Success:true}
+2020/09/22 14:14:35.939012 Leader [1] replicating [2]th entry to peer [3] succeed: {Term:4 Command:30}
+2020/09/22 14:14:35.938964 Leader [1] received response from server [0]: &{EventID:1600809275938665 Term:4 Success:true}
+2020/09/22 14:14:35.939081 Leader [1] replicating [2]th entry to peer [0] succeed: {Term:4 Command:30}
+2020/09/22 14:14:35.939189 Leader [1] received response from server [2]: &{EventID:1600809275938869 Term:4 Success:true}
+2020/09/22 14:14:35.939219 Leader [1] replicating [2]th entry to peer [2] succeed: {Term:4 Command:30}
+2020/09/22 14:14:35.939234 Leader [1] received response from server [4]: &{EventID:1600809275938761 Term:4 Success:true}
+2020/09/22 14:14:35.939259 Leader [1] replicating [2]th entry to peer [4] succeed: {Term:4 Command:30}
+2020/09/22 14:14:35.988884 Server [1]'s nextIndex: [3 2 3 3 3]
+2020/09/22 14:14:35.989031 Leader [1] sending [3]th entry to peer [0]: &{EventID:1600809275989016 LeaderID:1 Term:4 PrevLogIndex:2 PrevLogTerm:4 Entries:[{Term:4 Command:1000}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.989081 Server [1]'s nextIndex: [3 2 3 3 3]
+2020/09/22 14:14:35.989127 Leader [1] sending [3]th entry to peer [3]: &{EventID:1600809275989117 LeaderID:1 Term:4 PrevLogIndex:2 PrevLogTerm:4 Entries:[{Term:4 Command:1000}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.989173 Server [1]'s nextIndex: [3 2 3 3 3]
+2020/09/22 14:14:35.989210 Leader [1] sending [3]th entry to peer [2]: &{EventID:1600809275989200 LeaderID:1 Term:4 PrevLogIndex:2 PrevLogTerm:4 Entries:[{Term:4 Command:1000}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.989260 Server [1]'s nextIndex: [3 2 3 3 3]
+2020/09/22 14:14:35.989296 Leader [1] sending [3]th entry to peer [4]: &{EventID:1600809275989287 LeaderID:1 Term:4 PrevLogIndex:2 PrevLogTerm:4 Entries:[{Term:4 Command:1000}] LeaderCommitIndex:1}
+2020/09/22 14:14:35.989427 Leader [1] received response from server [0]: &{EventID:1600809275989016 Term:4 Success:true}
+2020/09/22 14:14:35.989457 Leader [1] replicating [3]th entry to peer [0] succeed: {Term:4 Command:1000}
+2020/09/22 14:14:35.989479 Leader [1] received response from server [3]: &{EventID:1600809275989117 Term:4 Success:true}
+2020/09/22 14:14:35.989506 Leader [1] replicating [3]th entry to peer [3] succeed: {Term:4 Command:1000}
+2020/09/22 14:14:35.989620 Leader [1] received response from server [2]: &{EventID:1600809275989200 Term:4 Success:true}
+2020/09/22 14:14:35.989643 Leader [1] replicating [3]th entry to peer [2] succeed: {Term:4 Command:1000}
+2020/09/22 14:14:35.989659 Leader [1] received response from server [4]: &{EventID:1600809275989287 Term:4 Success:true}
+2020/09/22 14:14:35.989681 Leader [1] replicating [3]th entry to peer [4] succeed: {Term:4 Command:1000}
+2020/09/22 14:14:36.038716 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.038891 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809276038856 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:36.038955 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.038998 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809276038989 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:36.039065 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.039099 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809276039091 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:36.039136 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.039177 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809276039169 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:1}
+2020/09/22 14:14:36.039887 Leader [1] received response from server [0]: &{EventID:1600809276038989 Term:4 Success:true}
+2020/09/22 14:14:36.039917 Leader [1] replicating [4]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.040480 Leader [1] received response from server [3]: &{EventID:1600809276038856 Term:4 Success:true}
+2020/09/22 14:14:36.040510 Leader [1] replicating [4]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.040620 Leader [1] received response from server [2]: &{EventID:1600809276039169 Term:4 Success:true}
+2020/09/22 14:14:36.040650 Leader [1] replicating [4]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.040748 Leader [1] received response from server [4]: &{EventID:1600809276039091 Term:4 Success:true}
+2020/09/22 14:14:36.040777 Leader [1] replicating [4]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.043746 Server [1] incrementing commitIndex to [2]
+2020/09/22 14:14:36.043793 Server [1] incrementing commitIndex to [3]
+2020/09/22 14:14:36.043812 Server [1] commiting log at index[2]: {Term:4 Command:30}
+2020/09/22 14:14:36.043828 Server [1] commiting log at index[3]: {Term:4 Command:1000}
+2020/09/22 14:14:36.089111 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.089238 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809276089194 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.089300 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.089341 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809276089331 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.089379 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.089429 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809276089402 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.089478 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.089507 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809276089499 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.089550 Peer [0] found new commit index [3]
+2020/09/22 14:14:36.089551 Peer [3] found new commit index [3]
+2020/09/22 14:14:36.089664 Leader [1] received response from server [0]: &{EventID:1600809276089331 Term:4 Success:true}
+2020/09/22 14:14:36.089689 Leader [1] replicating [4]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.089666 Peer [2] found new commit index [3]
+2020/09/22 14:14:36.089721 Leader [1] received response from server [3]: &{EventID:1600809276089194 Term:4 Success:true}
+2020/09/22 14:14:36.089748 Peer [4] found new commit index [3]
+2020/09/22 14:14:36.089775 Leader [1] received response from server [2]: &{EventID:1600809276089402 Term:4 Success:true}
+2020/09/22 14:14:36.089752 Leader [1] replicating [4]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.089820 Leader [1] replicating [4]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.089865 Leader [1] received response from server [4]: &{EventID:1600809276089499 Term:4 Success:true}
+2020/09/22 14:14:36.089894 Leader [1] replicating [4]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.138249 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.138272 Leader [1] sending heartbeat entry to peer [3]: &{EventID:1600809276138268 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.138297 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.138318 Leader [1] sending heartbeat entry to peer [0]: &{EventID:1600809276138314 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.138345 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.138356 Leader [1] sending heartbeat entry to peer [4]: &{EventID:1600809276138353 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.138385 Server [1]'s nextIndex: [4 2 4 4 4]
+2020/09/22 14:14:36.138414 Leader [1] sending heartbeat entry to peer [2]: &{EventID:1600809276138402 LeaderID:1 Term:4 PrevLogIndex:3 PrevLogTerm:4 Entries:[] LeaderCommitIndex:3}
+2020/09/22 14:14:36.138474 Leader [1] received response from server [3]: &{EventID:1600809276138268 Term:4 Success:true}
+2020/09/22 14:14:36.138489 Leader [1] replicating [4]th entry to peer [3] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.138544 Leader [1] received response from server [4]: &{EventID:1600809276138353 Term:4 Success:true}
+2020/09/22 14:14:36.138557 Leader [1] replicating [4]th entry to peer [4] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.138565 Leader [1] received response from server [0]: &{EventID:1600809276138314 Term:4 Success:true}
+2020/09/22 14:14:36.138569 Leader [1] replicating [4]th entry to peer [0] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.138591 Leader [1] received response from server [2]: &{EventID:1600809276138402 Term:4 Success:true}
+2020/09/22 14:14:36.138602 Leader [1] replicating [4]th entry to peer [2] succeed: {Term:0 Command:<nil>}
+2020/09/22 14:14:36.143502 Server [2] commiting log at index[2]: {Term:4 Command:30}
+2020/09/22 14:14:36.143547 Server [2] commiting log at index[3]: {Term:4 Command:1000}
+2020/09/22 14:14:36.143560 Server [0] commiting log at index[2]: {Term:4 Command:30}
+2020/09/22 14:14:36.143583 Server [0] commiting log at index[3]: {Term:4 Command:1000}
+2020/09/22 14:14:36.143529 Server [4] commiting log at index[2]: {Term:4 Command:30}
+2020/09/22 14:14:36.143612 Server [4] commiting log at index[3]: {Term:4 Command:1000}
+2020/09/22 14:14:36.143606 Server [3] commiting log at index[2]: {Term:4 Command:30}
+2020/09/22 14:14:36.143629 Server [3] commiting log at index[3]: {Term:4 Command:1000}
+  ... Passed --   2.8  5  175   47876    3
+PASS
+ok  	_/Users/shihaojing/Code/DistributedSystems/ShardedKeyValueService/src/raft	2.898s

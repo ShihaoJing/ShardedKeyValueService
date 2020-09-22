@@ -203,7 +203,7 @@ func TestFailNoAgree2B(t *testing.T) {
 		t.Fatalf("expected index 2, got %v", index)
 	}
 
-	time.Sleep(2 * RaftElectionTimeout)
+	time.Sleep(1 * RaftElectionTimeout)
 
 	n, _ := cfg.nCommitted(index)
 	if n > 0 {
