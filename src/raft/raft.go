@@ -80,12 +80,12 @@ type Raft struct {
 	// state a Raft server must maintain.
 
 	// Persistent state
-	state       int
 	currentTerm int
 	votedFor    int
 	log         []Log
 
 	// Volatile state on all servers
+	state        int
 	lastLogIndex int
 	commitIndex  int
 	lastApplied  int
@@ -517,7 +517,7 @@ func (rf *Raft) startLogReplication() {
 }
 
 func (rf *Raft) sendLogEntries(server int, term int) {
-	ticker := time.NewTicker(50 * time.Millisecond)
+	ticker := time.NewTicker(time.Duration(50+server*5) * time.Millisecond)
 	for range ticker.C {
 		if rf.killed() {
 			return
