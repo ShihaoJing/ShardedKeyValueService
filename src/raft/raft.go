@@ -119,10 +119,10 @@ func (rf *Raft) init() {
 	rf.matchIndex = make([]int, len(rf.peers))
 	// Start periodic routines
 	go rf.electionTiming()
-	go rf.incrementCommitIndex()
+	go rf.updateCommitIndex()
 }
 
-func (rf *Raft) incrementCommitIndex() {
+func (rf *Raft) updateCommitIndex() {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	for range ticker.C {
 		if rf.killed() {
@@ -512,19 +512,19 @@ func (rf *Raft) startLogReplication() {
 		if server == rf.me {
 			continue
 		}
-		go rf.sendLogEntries(server)
+		go rf.sendLogEntries(server, rf.currentTerm)
 	}
 }
 
-func (rf *Raft) sendLogEntries(server int) {
+func (rf *Raft) sendLogEntries(server int, term int) {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	for range ticker.C {
 		if rf.killed() {
 			return
 		}
 		rf.mu.Lock()
-		if rf.state != Leader {
-			DPrintf(1, "Server [%d] no longer a leader. Stop log replication.", rf.me)
+		if rf.state != Leader || term != rf.currentTerm {
+			DPrintf(1, "Server [%d] no longer a leader or term changed. Stop log replication.", rf.me)
 			rf.mu.Unlock()
 			return
 		}
