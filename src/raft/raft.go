@@ -109,7 +109,7 @@ func (rf *Raft) init() {
 	rf.state = Follower
 	rf.currentTerm = 0
 	rf.votedFor = NilCandidateID
-	rf.log = make([]Log, 100)
+	rf.log = make([]Log, 1000)
 	rf.log[0] = Log{0, "sentinel"}
 	rf.lastLogIndex = 0
 	rf.commitIndex = 0
@@ -125,6 +125,9 @@ func (rf *Raft) init() {
 func (rf *Raft) incrementCommitIndex() {
 	ticker := time.NewTicker(100 * time.Millisecond)
 	for range ticker.C {
+		if rf.killed() {
+			return
+		}
 		rf.mu.Lock()
 
 		if rf.state == Leader {
@@ -343,7 +346,10 @@ func (rf *Raft) RequestVote(args *VoteRequest, reply *VoteResponse) {
 		rf.votedFor = NilCandidateID
 	}
 
-	if rf.votedFor != NilCandidateID || rf.log[rf.lastLogIndex].Term > args.LastLogTerm || rf.lastLogIndex > args.LastLogIndex {
+	// Reject vote if
+	// 1. Has voted for someone else
+	// 2. More up-to-date than candidate
+	if rf.votedFor != NilCandidateID || rf.log[rf.lastLogIndex].Term > args.LastLogTerm || (rf.log[rf.lastLogIndex].Term == args.LastLogTerm && rf.lastLogIndex > args.LastLogIndex) {
 		reply.Term = rf.currentTerm
 		reply.VoteGranted = false
 		return
@@ -441,11 +447,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesRe
 		return
 	}
 
-	rf.lastLogIndex = args.PrevLogIndex
+	nextAppendIndex := args.PrevLogIndex
 	for _, entry := range args.Entries {
-		rf.lastLogIndex++
-		rf.log[rf.lastLogIndex] = entry
+		nextAppendIndex++
+		if nextAppendIndex <= rf.lastLogIndex && rf.log[nextAppendIndex] != entry {
+			// delete conflit entry and all that follow it
+			rf.lastLogIndex = nextAppendIndex - 1
+		}
+		rf.log[nextAppendIndex] = entry
 	}
+	rf.lastLogIndex = Max(nextAppendIndex, rf.lastLogIndex)
 
 	if args.LeaderCommitIndex > rf.commitIndex {
 		rf.commitIndex = Min(args.LeaderCommitIndex, rf.lastLogIndex)
@@ -508,6 +519,9 @@ func (rf *Raft) startLogReplication() {
 func (rf *Raft) sendLogEntries(server int) {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	for range ticker.C {
+		if rf.killed() {
+			return
+		}
 		rf.mu.Lock()
 		if rf.state != Leader {
 			DPrintf(1, "Server [%d] no longer a leader. Stop log replication.", rf.me)
@@ -529,20 +543,38 @@ func (rf *Raft) sendLogEntries(server int) {
 			DPrintf(1, "Leader [%d] sending heartbeat entry to peer [%d]: %+v\n", rf.me, server, req)
 		}
 		rf.mu.Unlock()
-		if rf.sendAppendEntries(server, req, resp) {
-			DPrintf(1, "Leader [%d] received response from server [%d]: %+v\n", rf.me, server, resp)
-			rf.mu.Lock()
-			if resp.Success {
-				DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed: %+v\n", rf.me, logIndex, server, rf.log[logIndex])
-				rf.matchIndex[server] = prevIndex
-				if rf.nextIndex[server] <= rf.lastLogIndex {
-					rf.nextIndex[server]++
-				}
-			} else {
-				rf.nextIndex[server]--
-			}
-			rf.mu.Unlock()
+
+		if rf.sendAppendEntries(server, req, resp) == false {
+			continue
 		}
+
+		DPrintf(1, "Leader [%d] received response from server [%d]: %+v\n", rf.me, server, resp)
+		rf.mu.Lock()
+		if req.Term != rf.currentTerm {
+			rf.mu.Unlock()
+			DPrintf(1, "Server [%d] term [%d] changed to term [%d] during RPC. Stop log replication.", rf.me, req.Term, rf.currentTerm)
+			return
+		}
+		if resp.Success {
+			DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed: %+v\n", rf.me, logIndex, server, rf.log[logIndex])
+			rf.matchIndex[server] = prevIndex
+			if rf.nextIndex[server] <= rf.lastLogIndex {
+				rf.nextIndex[server]++
+			}
+		} else {
+			if resp.Term > rf.currentTerm {
+				DPrintf(1, "Server [%d]'s term[%d] outdated by Server[%d]'s term[%d]. Convert to follower. \n", rf.me, rf.currentTerm, rf.me, resp.Term)
+				rf.state = Follower
+				rf.currentTerm = resp.Term
+				rf.votedFor = NilCandidateID
+			} else {
+				//TODO: optimize quick backup
+				if rf.nextIndex[server] > 1 {
+					rf.nextIndex[server]--
+				}
+			}
+		}
+		rf.mu.Unlock()
 	}
 }
 
