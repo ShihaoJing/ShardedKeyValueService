@@ -98,6 +98,14 @@ type Raft struct {
 	applyCh   chan ApplyMsg
 }
 
+func (rf *Raft) appendLogEntry(entry Log, appendIndex int) {
+	if appendIndex >= len(rf.log) {
+		rf.log = append(rf.log, entry)
+	} else {
+		rf.log[appendIndex] = entry
+	}
+}
+
 func randomElectionTimeout() int {
 	rand.Seed(time.Now().UnixNano())
 	min := 300
@@ -109,7 +117,7 @@ func (rf *Raft) init() {
 	rf.state = Follower
 	rf.currentTerm = 0
 	rf.votedFor = NilCandidateID
-	rf.log = make([]Log, 1000)
+	rf.log = make([]Log, 2)
 	rf.log[0] = Log{0, "sentinel"}
 	rf.lastLogIndex = 0
 	rf.commitIndex = 0
@@ -447,16 +455,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesRe
 		return
 	}
 
-	nextAppendIndex := args.PrevLogIndex
+	appendIndex := args.PrevLogIndex
 	for _, entry := range args.Entries {
-		nextAppendIndex++
-		if nextAppendIndex <= rf.lastLogIndex && rf.log[nextAppendIndex] != entry {
+		appendIndex++
+		if appendIndex <= rf.lastLogIndex && rf.log[appendIndex] != entry {
 			// delete conflit entry and all that follow it
-			rf.lastLogIndex = nextAppendIndex - 1
+			rf.lastLogIndex = appendIndex - 1
 		}
-		rf.log[nextAppendIndex] = entry
+		rf.appendLogEntry(entry, appendIndex)
 	}
-	rf.lastLogIndex = Max(nextAppendIndex, rf.lastLogIndex)
+	rf.lastLogIndex = Max(appendIndex, rf.lastLogIndex)
 
 	if args.LeaderCommitIndex > rf.commitIndex {
 		rf.commitIndex = Min(args.LeaderCommitIndex, rf.lastLogIndex)
@@ -499,7 +507,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
 	rf.lastLogIndex++
 	newLog := Log{rf.currentTerm, command}
-	rf.log[rf.lastLogIndex] = newLog
+	rf.appendLogEntry(newLog, rf.lastLogIndex)
 
 	index := rf.lastLogIndex
 	term := rf.currentTerm
@@ -556,7 +564,7 @@ func (rf *Raft) sendLogEntries(server int, term int) {
 			return
 		}
 		if resp.Success {
-			DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed: %+v\n", rf.me, logIndex, server, rf.log[logIndex])
+			DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed.\n", rf.me, logIndex, server)
 			rf.matchIndex[server] = prevIndex
 			if rf.nextIndex[server] <= rf.lastLogIndex {
 				rf.nextIndex[server]++
