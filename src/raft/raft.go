@@ -114,43 +114,44 @@ func randomElectionTimeout() int {
 
 func (rf *Raft) init() {
 	go rf.electionTiming()
-	go rf.updateCommitIndex()
+	go rf.updateApplyIndex()
 }
 
 func (rf *Raft) updateCommitIndex() {
-	ticker := time.NewTicker(50 * time.Millisecond)
+	newCommitIndex := rf.commitIndex
+	for i := rf.commitIndex + 1; i <= rf.lastLogIndex; i++ {
+		DPrintf(1, "Leader[%d] trying to update commit index to [%d]\n", rf.me, i)
+		DPrintf(1, "Leader[%d] match index: %+v\n", rf.me, rf.matchIndex)
+		nReplicated := 1
+		for server := range rf.peers {
+			if server == rf.me {
+				continue
+			}
+			if rf.matchIndex[server] >= i {
+				nReplicated++
+			}
+		}
+		if nReplicated > len(rf.peers)/2 && rf.OpLog[i].Term == rf.CurrentTerm {
+			DPrintf(1, "Leader[%d] incrementing commitIndex to [%d]\n", rf.me, i)
+			newCommitIndex = i
+		}
+	}
+	rf.commitIndex = newCommitIndex
+}
+
+func (rf *Raft) updateApplyIndex() {
+	ticker := time.NewTicker(time.Duration(len(rf.peers)*5) * time.Millisecond)
 	for range ticker.C {
 		if rf.killed() {
 			return
 		}
+
 		rf.mu.Lock()
-
-		if rf.state == Leader {
-			newCommitIndex := rf.commitIndex
-			for i := rf.commitIndex + 1; i <= rf.lastLogIndex; i++ {
-				nReplicated := 1
-				for server := range rf.peers {
-					if server == rf.me {
-						continue
-					}
-					if rf.matchIndex[server] >= i {
-						nReplicated++
-					}
-				}
-				if nReplicated > len(rf.peers)/2 && rf.OpLog[i].Term == rf.CurrentTerm {
-					DPrintf(1, "Server [%d] incrementing commitIndex to [%d]\n", rf.me, i)
-					newCommitIndex = i
-				}
-			}
-			rf.commitIndex = newCommitIndex
-		}
-
 		for rf.lastApplied < rf.commitIndex {
 			rf.lastApplied++
 			DPrintf(1, "Server [%d] commiting log at index[%d]: %+v", rf.me, rf.lastApplied, rf.OpLog[rf.lastApplied])
 			rf.applyCh <- ApplyMsg{true, rf.OpLog[rf.lastApplied].Command, rf.lastApplied}
 		}
-
 		rf.mu.Unlock()
 	}
 }
@@ -158,7 +159,7 @@ func (rf *Raft) updateCommitIndex() {
 func (rf *Raft) electionTiming() {
 	timeoutRuration := randomElectionTimeout()
 	electionTimer := time.NewTicker(time.Duration(timeoutRuration) * time.Millisecond)
-	DPrintf(1, "Server [%d] timeout duration: [%d] ms\n", rf.me, timeoutRuration)
+	DPrintf(1, "Server[%d] timeout duration: [%d] ms\n", rf.me, timeoutRuration)
 	for {
 		if rf.killed() {
 			DPrintf(1, "Peer [%d] got killed !!!\n", rf.me)
@@ -170,16 +171,16 @@ func (rf *Raft) electionTiming() {
 			electionTimer = time.NewTicker(time.Duration(timeoutRuration) * time.Millisecond)
 		case <-electionTimer.C:
 			rf.mu.Lock()
-			DPrintf(5, "electionTiming: Holding lock")
+			DPrintf(2, "Server[%d] electionTiming: Holding lock\n", rf.me)
 			if rf.state != Leader {
-				DPrintf(1, "Peer [%d] timout. Converts to candidate at new term [%d].\n", rf.me, rf.CurrentTerm+1)
+				DPrintf(1, "Server[%d] timout. Converts to candidate at new term [%d].\n", rf.me, rf.CurrentTerm+1)
 				rf.state = Candidate
 				rf.CurrentTerm++
 				rf.VotedFor = rf.me
 				rf.persist()
 				go rf.election(rf.CurrentTerm, rf.lastLogIndex, rf.OpLog[rf.lastLogIndex].Term)
 			}
-			DPrintf(5, "electionTiming: Releasing lock")
+			DPrintf(2, "Server[%d] electionTiming: Releasing lock\n", rf.me)
 			rf.mu.Unlock()
 		}
 	}
@@ -198,7 +199,7 @@ func (rf *Raft) election(electionTerm int, lastLogIndex int, lastLogTerm int) {
 	}
 
 	nVotes := 1
-	timer := time.NewTimer(20 * time.Millisecond)
+	timer := time.NewTimer(100 * time.Millisecond)
 	for wait := true; wait; {
 		select {
 		case <-voteReceived:
@@ -302,10 +303,10 @@ func (rf *Raft) readPersist(data []byte) {
 	if d.Decode(&currentTerm) != nil ||
 		d.Decode(&VotedFor) != nil ||
 		d.Decode(&log) != nil {
-		DPrintf(2, "Decoding persist state failure.")
+		DPrintf(1, "Decoding persist state failure.")
 	} else {
 		rf.mu.Lock()
-		DPrintf(2, "Server[%d] reading persist state: %d, %d, %+v\n", rf.me, currentTerm, VotedFor, log)
+		DPrintf(1, "Server[%d] reading persist state: %d, %d, %+v\n", rf.me, currentTerm, VotedFor, log)
 		rf.CurrentTerm = currentTerm
 		rf.VotedFor = VotedFor
 		rf.OpLog = log
@@ -418,8 +419,10 @@ type AppendEntriesResponse struct {
 
 // AppendEntries RPC handler.
 func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesResponse) {
-	DPrintf(3, "Server [%d] received AppendEntries request: %+v\n", rf.me, args)
+	DPrintf(2, "Server[%d] received AppendEntries request: %+v\n", rf.me, args)
+	DPrintf(2, "Server[%d] AppendEntries: Holding lock\n", rf.me)
 	rf.mu.Lock()
+	defer DPrintf(2, "Server[%d] AppendEntries: Releasing lock\n", rf.me)
 	defer rf.mu.Unlock()
 	reply.EventID = args.EventID
 
@@ -495,6 +498,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
+	DPrintf(1, "Raft Server[%d] received start[%+v], state: %v\n", rf.me, command, rf.state)
 	if rf.state != Leader {
 		return -1, -1, false
 	}
@@ -520,7 +524,7 @@ func (rf *Raft) startLogReplication() {
 }
 
 func (rf *Raft) sendLogEntries(server int, term int) {
-	ticker := time.NewTicker(time.Duration(50+server*5) * time.Millisecond)
+	ticker := time.NewTicker(time.Duration(10+server*5) * time.Millisecond)
 	for range ticker.C {
 		if rf.killed() {
 			return
@@ -561,6 +565,7 @@ func (rf *Raft) sendLogEntries(server int, term int) {
 		if resp.Success {
 			DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed.\n", rf.me, logIndex, server)
 			rf.matchIndex[server] = prevIndex
+			rf.updateCommitIndex()
 			if rf.nextIndex[server] <= rf.lastLogIndex {
 				rf.nextIndex[server]++
 			}
