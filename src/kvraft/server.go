@@ -1,30 +1,51 @@
 package kvraft
 
 import (
-	"../labgob"
-	"../labrpc"
 	"log"
-	"../raft"
 	"sync"
 	"sync/atomic"
+	"time"
+
+	"../labgob"
+	"../labrpc"
+	"../raft"
 )
 
-const Debug = 0
+const debug = 1
 
-func DPrintf(format string, a ...interface{}) (n int, err error) {
-	if Debug > 0 {
+// DPrintf helper function to print logs
+func DPrintf(level int, format string, a ...interface{}) (n int, err error) {
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	if debug >= level {
 		log.Printf(format, a...)
 	}
 	return
 }
 
+// Operation types
+const (
+	Put    = "Put"
+	Append = "Append"
+	Get    = "Get"
+)
 
+// Op Op struct
 type Op struct {
 	// Your definitions here.
 	// Field names must start with capital letters,
 	// otherwise RPC will break.
+	OpType string
+	Key    string
+	Value  string
 }
 
+// Result Result struct
+type Result struct {
+	err   Err
+	value string // value for GET method
+}
+
+// KVServer KVServer
 type KVServer struct {
 	mu      sync.Mutex
 	me      int
@@ -35,19 +56,120 @@ type KVServer struct {
 	maxraftstate int // snapshot if log grows this big
 
 	// Your definitions here.
+	kvMap    map[string]string
+	resultCh map[int]chan Result
 }
 
+func (kv *KVServer) waitForCommitedOp() {
+	timer := time.NewTicker(100 * time.Millisecond)
+	for {
+		if kv.killed() {
+			DPrintf(1, "KV[%d] got killed !!!\n", kv.me)
+			return
+		}
+		select {
+		case <-timer.C:
+			DPrintf(2, "KV[%d]: timeout while waiting for commited op.\n", kv.me)
+		case msg := <-kv.applyCh:
+			DPrintf(1, "KV[%d]: received a commited op: %+v\n", kv.me, msg)
+			op := msg.Command.(Op)
+			err, val := kv.executeOp(op)
+			result := Result{err, val}
+			kv.mu.Lock()
+			if resultChan, ok := kv.resultCh[msg.CommandIndex]; ok == true {
+				resultChan <- result
+			}
+			kv.mu.Unlock()
+		}
+	}
+}
 
-func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
+func (kv *KVServer) executeOp(op Op) (Err, string) {
+	var err Err
+	var val string
+	switch op.OpType {
+	case Put:
+		DPrintf(1, "KV[%d]: executing Put op: %+v\n", kv.me, op)
+		kv.kvMap[op.Key] = op.Value
+		err = OK
+		val = ""
+	case Append:
+		DPrintf(1, "KV[%d]: executing Append op: %+v\n", kv.me, op)
+		kv.kvMap[op.Key] = kv.kvMap[op.Key] + op.Value
+		err = OK
+		val = ""
+	case Get:
+		DPrintf(1, "KV[%d]: executing Get op: %+v\n", kv.me, op)
+		v, _ := kv.kvMap[op.Key]
+		err = OK
+		val = v
+
+		// if ok == false {
+		// 	err = ErrNoKey
+		// 	val = ""
+		// } else {
+		// 	err = OK
+		// 	val = v
+		// }
+	}
+	return err, val
+}
+
+// Get RPC handler of Get
+func (kv *KVServer) Get(args *GetRequest, reply *GetReply) {
 	// Your code here.
+	DPrintf(1, "KV[%d] received Get: %+v\n", kv.me, args)
+	op := Op{Get, args.Key, ""}
+	index, _, isLeader := kv.rf.Start(op)
+	if isLeader == false {
+		reply.Err = ErrWrongLeader
+		return
+	}
+
+	// Revisit in case of failure
+	kv.mu.Lock()
+	kv.resultCh[index] = make(chan Result)
+	kv.mu.Unlock()
+
+	timer := time.NewTimer(300 * time.Millisecond)
+	select {
+	case result := <-kv.resultCh[index]:
+		reply.Err = result.err
+		reply.Value = result.value
+	case <-timer.C:
+		reply.Err = ErrTimeOut
+		DPrintf(1, "KV[%d]: Get timeout!\n", kv.me)
+	}
+	return
 }
 
-func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	// Your code here.
+// PutAppend RPC handler of PutAppend
+func (kv *KVServer) PutAppend(args *PutAppendRequest, reply *PutAppendReply) {
+	DPrintf(1, "KV[%d] received PutAppend: %+v\n", kv.me, args)
+	op := Op{args.Op, args.Key, args.Value}
+	index, _, isLeader := kv.rf.Start(op)
+	if isLeader == false {
+		reply.Err = ErrWrongLeader
+		return
+	}
+
+	// Revisit in case of failure
+	kv.mu.Lock()
+	kv.resultCh[index] = make(chan Result)
+	kv.mu.Unlock()
+
+	timer := time.NewTimer(300 * time.Millisecond)
+	select {
+	case result := <-kv.resultCh[index]:
+		reply.Err = result.err
+	case <-timer.C:
+		reply.Err = ErrTimeOut
+		DPrintf(1, "KV[%d]: PutAppend timeout!\n", kv.me)
+	}
+	return
 }
 
-//
-// the tester calls Kill() when a KVServer instance won't
+// Kill the tester calls Kill() when a KVServer instance won't
 // be needed again. for your convenience, we supply
 // code to set rf.dead (without needing a lock),
 // and a killed() method to test rf.dead in
@@ -67,8 +189,7 @@ func (kv *KVServer) killed() bool {
 	return z == 1
 }
 
-//
-// servers[] contains the ports of the set of
+// StartKVServer servers[] contains the ports of the set of
 // servers that will cooperate via Raft to
 // form the fault-tolerant key/value service.
 // me is the index of the current server in servers[].
@@ -96,6 +217,10 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 
 	// You may need initialization code here.
+
+	kv.kvMap = make(map[string]string)
+	kv.resultCh = make(map[int]chan Result)
+	go kv.waitForCommitedOp()
 
 	return kv
 }

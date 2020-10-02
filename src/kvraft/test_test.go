@@ -20,24 +20,24 @@ const electionTimeout = 1 * time.Second
 const linearizabilityCheckTimeout = 1 * time.Second
 
 // get/put/putappend that keep counts
-func Get(cfg *config, ck *Clerk, key string) string {
+func tryGet(cfg *config, ck *Clerk, key string) string {
 	v := ck.Get(key)
 	cfg.op()
 	return v
 }
 
-func Put(cfg *config, ck *Clerk, key string, value string) {
+func tryPut(cfg *config, ck *Clerk, key string, value string) {
 	ck.Put(key, value)
 	cfg.op()
 }
 
-func Append(cfg *config, ck *Clerk, key string, value string) {
+func tryAppend(cfg *config, ck *Clerk, key string, value string) {
 	ck.Append(key, value)
 	cfg.op()
 }
 
 func check(cfg *config, t *testing.T, ck *Clerk, key string, value string) {
-	v := Get(cfg, ck, key)
+	v := tryGet(cfg, ck, key)
 	if v != value {
 		t.Fatalf("Get(%v): expected:\n%v\nreceived:\n%v", key, value, v)
 	}
@@ -177,7 +177,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 	title = title + " (" + part + ")" // 3A or 3B
 
 	const nservers = 5
-	cfg := make_config(t, nservers, unreliable, maxraftstate)
+	cfg := makeConfig(t, nservers, unreliable, maxraftstate)
 	defer cfg.cleanup()
 
 	cfg.begin(title)
@@ -192,7 +192,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 		clnts[i] = make(chan int)
 	}
 	for i := 0; i < 3; i++ {
-		// log.Printf("Iteration %v\n", i)
+		//log.Printf("Iteration %v\n", i)
 		atomic.StoreInt32(&done_clients, 0)
 		atomic.StoreInt32(&done_partitioner, 0)
 		go spawn_clients_and_wait(t, cfg, nclients, func(cli int, myck *Clerk, t *testing.T) {
@@ -202,17 +202,17 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 			}()
 			last := ""
 			key := strconv.Itoa(cli)
-			Put(cfg, myck, key, last)
+			tryPut(cfg, myck, key, last)
 			for atomic.LoadInt32(&done_clients) == 0 {
 				if (rand.Int() % 1000) < 500 {
 					nv := "x " + strconv.Itoa(cli) + " " + strconv.Itoa(j) + " y"
-					// log.Printf("%d: client new append %v\n", cli, nv)
-					Append(cfg, myck, key, nv)
+					//log.Printf("%d: client new append %v\n", cli, nv)
+					tryAppend(cfg, myck, key, nv)
 					last = NextValue(last, nv)
 					j++
 				} else {
-					// log.Printf("%d: client new get %v\n", cli, key)
-					v := Get(cfg, myck, key)
+					//log.Printf("%d: client new get %v\n", cli, key)
+					v := tryGet(cfg, myck, key)
 					if v != last {
 						log.Fatalf("get wrong value, key %v, wanted:\n%v\n, got\n%v\n", key, last, v)
 					}
@@ -267,7 +267,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 			// }
 			key := strconv.Itoa(i)
 			// log.Printf("Check %v for client %d\n", j, i)
-			v := Get(cfg, ck, key)
+			v := tryGet(cfg, ck, key)
 			checkClntAppends(t, i, v, j)
 		}
 
@@ -318,7 +318,7 @@ func GenericTestLinearizability(t *testing.T, part string, nclients int, nserver
 	}
 	title = title + ", linearizability checks (" + part + ")" // 3A or 3B
 
-	cfg := make_config(t, nservers, unreliable, maxraftstate)
+	cfg := makeConfig(t, nservers, unreliable, maxraftstate)
 	defer cfg.cleanup()
 
 	cfg.begin(title)
@@ -350,15 +350,15 @@ func GenericTestLinearizability(t *testing.T, part string, nclients int, nserver
 				var out models.KvOutput
 				start := int64(time.Since(begin))
 				if (rand.Int() % 1000) < 500 {
-					Append(cfg, myck, key, nv)
+					tryAppend(cfg, myck, key, nv)
 					inp = models.KvInput{Op: 2, Key: key, Value: nv}
 					j++
 				} else if (rand.Int() % 1000) < 100 {
-					Put(cfg, myck, key, nv)
+					tryPut(cfg, myck, key, nv)
 					inp = models.KvInput{Op: 1, Key: key, Value: nv}
 					j++
 				} else {
-					v := Get(cfg, myck, key)
+					v := tryGet(cfg, myck, key)
 					inp = models.KvInput{Op: 0, Key: key}
 					out = models.KvOutput{Value: v}
 				}
@@ -457,26 +457,26 @@ func TestConcurrent3A(t *testing.T) {
 
 func TestUnreliable3A(t *testing.T) {
 	// Test: unreliable net, many clients (3A) ...
-	GenericTest(t, "3A", 5, true, false, false, -1)
+	GenericTest(t, "3A", 1, true, false, false, -1)
 }
 
 func TestUnreliableOneKey3A(t *testing.T) {
 	const nservers = 3
-	cfg := make_config(t, nservers, true, -1)
+	cfg := makeConfig(t, nservers, true, -1)
 	defer cfg.cleanup()
 
 	ck := cfg.makeClient(cfg.All())
 
 	cfg.begin("Test: concurrent append to same key, unreliable (3A)")
 
-	Put(cfg, ck, "k", "")
+	tryPut(cfg, ck, "k", "")
 
 	const nclient = 5
 	const upto = 10
 	spawn_clients_and_wait(t, cfg, nclient, func(me int, myck *Clerk, t *testing.T) {
 		n := 0
 		for n < upto {
-			Append(cfg, myck, "k", "x "+strconv.Itoa(me)+" "+strconv.Itoa(n)+" y")
+			tryAppend(cfg, myck, "k", "x "+strconv.Itoa(me)+" "+strconv.Itoa(n)+" y")
 			n++
 		}
 	})
@@ -486,7 +486,7 @@ func TestUnreliableOneKey3A(t *testing.T) {
 		counts = append(counts, upto)
 	}
 
-	vx := Get(cfg, ck, "k")
+	vx := tryGet(cfg, ck, "k")
 	checkConcurrentAppends(t, vx, counts)
 
 	cfg.end()
@@ -497,22 +497,22 @@ func TestUnreliableOneKey3A(t *testing.T) {
 // network ends up in the minority partition.
 func TestOnePartition3A(t *testing.T) {
 	const nservers = 5
-	cfg := make_config(t, nservers, false, -1)
+	cfg := makeConfig(t, nservers, false, -1)
 	defer cfg.cleanup()
 	ck := cfg.makeClient(cfg.All())
 
-	Put(cfg, ck, "1", "13")
+	tryPut(cfg, ck, "1", "13")
 
 	cfg.begin("Test: progress in majority (3A)")
 
-	p1, p2 := cfg.make_partition()
+	p1, p2 := cfg.makePartition()
 	cfg.partition(p1, p2)
 
 	ckp1 := cfg.makeClient(p1)  // connect ckp1 to p1
 	ckp2a := cfg.makeClient(p2) // connect ckp2a to p2
 	ckp2b := cfg.makeClient(p2) // connect ckp2b to p2
 
-	Put(cfg, ckp1, "1", "14")
+	tryPut(cfg, ckp1, "1", "14")
 	check(cfg, t, ckp1, "1", "14")
 
 	cfg.end()
@@ -522,11 +522,11 @@ func TestOnePartition3A(t *testing.T) {
 
 	cfg.begin("Test: no progress in minority (3A)")
 	go func() {
-		Put(cfg, ckp2a, "1", "15")
+		tryPut(cfg, ckp2a, "1", "15")
 		done0 <- true
 	}()
 	go func() {
-		Get(cfg, ckp2b, "1") // different clerk in p2
+		tryGet(cfg, ckp2b, "1") // different clerk in p2
 		done1 <- true
 	}()
 
@@ -539,7 +539,7 @@ func TestOnePartition3A(t *testing.T) {
 	}
 
 	check(cfg, t, ckp1, "1", "14")
-	Put(cfg, ckp1, "1", "16")
+	tryPut(cfg, ckp1, "1", "16")
 	check(cfg, t, ckp1, "1", "16")
 
 	cfg.end()
@@ -619,14 +619,14 @@ func TestPersistPartitionUnreliableLinearizable3A(t *testing.T) {
 func TestSnapshotRPC3B(t *testing.T) {
 	const nservers = 3
 	maxraftstate := 1000
-	cfg := make_config(t, nservers, false, maxraftstate)
+	cfg := makeConfig(t, nservers, false, maxraftstate)
 	defer cfg.cleanup()
 
 	ck := cfg.makeClient(cfg.All())
 
 	cfg.begin("Test: InstallSnapshot RPC (3B)")
 
-	Put(cfg, ck, "a", "A")
+	tryPut(cfg, ck, "a", "A")
 	check(cfg, t, ck, "a", "A")
 
 	// a bunch of puts into the majority partition.
@@ -634,10 +634,10 @@ func TestSnapshotRPC3B(t *testing.T) {
 	{
 		ck1 := cfg.makeClient([]int{0, 1})
 		for i := 0; i < 50; i++ {
-			Put(cfg, ck1, strconv.Itoa(i), strconv.Itoa(i))
+			tryPut(cfg, ck1, strconv.Itoa(i), strconv.Itoa(i))
 		}
 		time.Sleep(electionTimeout)
-		Put(cfg, ck1, "b", "B")
+		tryPut(cfg, ck1, "b", "B")
 	}
 
 	// check that the majority partition has thrown away
@@ -652,8 +652,8 @@ func TestSnapshotRPC3B(t *testing.T) {
 	cfg.partition([]int{0, 2}, []int{1})
 	{
 		ck1 := cfg.makeClient([]int{0, 2})
-		Put(cfg, ck1, "c", "C")
-		Put(cfg, ck1, "d", "D")
+		tryPut(cfg, ck1, "c", "C")
+		tryPut(cfg, ck1, "d", "D")
 		check(cfg, t, ck1, "a", "A")
 		check(cfg, t, ck1, "b", "B")
 		check(cfg, t, ck1, "1", "1")
@@ -663,7 +663,7 @@ func TestSnapshotRPC3B(t *testing.T) {
 	// now everybody
 	cfg.partition([]int{0, 1, 2}, []int{})
 
-	Put(cfg, ck, "e", "E")
+	tryPut(cfg, ck, "e", "E")
 	check(cfg, t, ck, "c", "C")
 	check(cfg, t, ck, "e", "E")
 	check(cfg, t, ck, "1", "1")
@@ -677,7 +677,7 @@ func TestSnapshotSize3B(t *testing.T) {
 	const nservers = 3
 	maxraftstate := 1000
 	maxsnapshotstate := 500
-	cfg := make_config(t, nservers, false, maxraftstate)
+	cfg := makeConfig(t, nservers, false, maxraftstate)
 	defer cfg.cleanup()
 
 	ck := cfg.makeClient(cfg.All())
@@ -685,9 +685,9 @@ func TestSnapshotSize3B(t *testing.T) {
 	cfg.begin("Test: snapshot size is reasonable (3B)")
 
 	for i := 0; i < 200; i++ {
-		Put(cfg, ck, "x", "0")
+		tryPut(cfg, ck, "x", "0")
 		check(cfg, t, ck, "x", "0")
-		Put(cfg, ck, "x", "1")
+		tryPut(cfg, ck, "x", "1")
 		check(cfg, t, ck, "x", "1")
 	}
 
