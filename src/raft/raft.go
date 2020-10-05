@@ -140,8 +140,8 @@ func (rf *Raft) updateCommitIndex() {
 }
 
 func (rf *Raft) updateApplyIndex() {
-	ticker := time.NewTicker(time.Duration(len(rf.peers)*5) * time.Millisecond)
-	for range ticker.C {
+	for {
+		time.Sleep(time.Duration(20) * time.Millisecond)
 		if rf.killed() {
 			return
 		}
@@ -151,6 +151,7 @@ func (rf *Raft) updateApplyIndex() {
 			rf.lastApplied++
 			DPrintf(1, "Server [%d] commiting log at index[%d]: %+v", rf.me, rf.lastApplied, rf.OpLog[rf.lastApplied])
 			rf.applyCh <- ApplyMsg{true, rf.OpLog[rf.lastApplied].Command, rf.lastApplied}
+			DPrintf(1, "Server [%d] sending commited log at index[%d] to KV done: %+v", rf.me, rf.lastApplied, rf.OpLog[rf.lastApplied])
 		}
 		rf.mu.Unlock()
 	}
@@ -162,12 +163,13 @@ func (rf *Raft) electionTiming() {
 	DPrintf(1, "Server[%d] timeout duration: [%d] ms\n", rf.me, timeoutRuration)
 	for {
 		if rf.killed() {
-			DPrintf(1, "Peer [%d] got killed !!!\n", rf.me)
+			DPrintf(1, "Server [%d] got killed !!!\n", rf.me)
+			electionTimer.Stop()
 			return
 		}
 		select {
 		case <-rf.heartbeat:
-			DPrintf(3, "Peer [%d] received heatbeat. Reset Timer.\n", rf.me)
+			DPrintf(3, "Server [%d] received heatbeat. Reset Timer.\n", rf.me)
 			electionTimer = time.NewTicker(time.Duration(timeoutRuration) * time.Millisecond)
 		case <-electionTimer.C:
 			rf.mu.Lock()
@@ -242,12 +244,12 @@ func (rf *Raft) election(electionTerm int, lastLogIndex int, lastLogTerm int) {
 func (rf *Raft) requestVote(server int, req VoteRequest, voteReceived chan interface{}, wg *sync.WaitGroup) {
 	defer wg.Done()
 	resp := VoteResponse{}
-	DPrintf(1, "Candidate [%d] sending vote request to peer [%d]\n", rf.me, server)
+	DPrintf(1, "Candidate [%d] sending vote request to Server [%d]\n", rf.me, server)
 	if rf.sendRequestVote(server, &req, &resp) == false {
 		return
 	}
 
-	DPrintf(1, "Candidate [%d] received vote response from peer [%d]: %+v\n", rf.me, server, resp)
+	DPrintf(1, "Candidate [%d] received vote response from Server [%d]: %+v\n", rf.me, server, resp)
 	DPrintf(5, "requestVote: Holding lock")
 	if resp.VoteGranted {
 		voteReceived <- "Vote received"
@@ -438,7 +440,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesRe
 
 	if args.Term > rf.CurrentTerm {
 		// Follow new leader
-		DPrintf(1, "Server [%d]'s term[%d] outdated by Server[%d]'s term[%d]. Convert to follower. \n", rf.me, rf.CurrentTerm, args.LeaderID, args.Term)
+		DPrintf(1, "Server [%d]'s term[%d] outdated by Server[%d]'s term[%d]. Convert to follower: %+v\n", rf.me, rf.CurrentTerm, args.LeaderID, args.Term, args)
 		rf.state = Follower
 		rf.CurrentTerm = args.Term
 		rf.VotedFor = NilCandidateID
@@ -465,7 +467,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesRequest, reply *AppendEntriesRe
 
 	if args.LeaderCommitIndex > rf.commitIndex {
 		rf.commitIndex = Min(args.LeaderCommitIndex, rf.lastLogIndex)
-		DPrintf(1, "Peer [%d] found new commit index [%d]", rf.me, rf.commitIndex)
+		DPrintf(1, "Server [%d] found new commit index [%d]", rf.me, rf.commitIndex)
 	}
 
 	reply.Term = rf.CurrentTerm
@@ -492,13 +494,14 @@ func (rf *Raft) sendAppendEntries(server int, args *AppendEntriesRequest, reply 
 // the leader.
 //
 func (rf *Raft) Start(command interface{}) (int, int, bool) {
+	DPrintf(1, "RaftServer[%d] received start[%+v], state: %v\n", rf.me, command, rf.state)
 	if rf.killed() {
+		DPrintf(1, "RaftServer[%d] is killed.\n", rf.me)
 		return -1, -1, false
 	}
 
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-	DPrintf(1, "Raft Server[%d] received start[%+v], state: %v\n", rf.me, command, rf.state)
 	if rf.state != Leader {
 		return -1, -1, false
 	}
@@ -524,18 +527,18 @@ func (rf *Raft) startLogReplication() {
 }
 
 func (rf *Raft) sendLogEntries(server int, term int) {
-	ticker := time.NewTicker(time.Duration(10+server*5) * time.Millisecond)
-	for range ticker.C {
+	for {
+		time.Sleep(time.Duration(20) * time.Millisecond)
 		if rf.killed() {
 			return
 		}
 		rf.mu.Lock()
 		if rf.state != Leader || term != rf.CurrentTerm {
-			DPrintf(1, "Server [%d] no longer a leader or term changed. Stop log replication.", rf.me)
+			DPrintf(1, "Server [%d] no longer a leader or term changed. Stop log replication to [%d] for term [%d]\n", rf.me, server, term)
 			rf.mu.Unlock()
 			return
 		}
-		DPrintf(1, "Server [%d]'s nextIndex: %+v\n", rf.me, rf.nextIndex)
+		DPrintf(2, "Server [%d]'s nextIndex: %+v\n", rf.me, rf.nextIndex)
 		logIndex := rf.nextIndex[server]
 		prevIndex := logIndex - 1
 		entries := []Log{}
@@ -545,13 +548,14 @@ func (rf *Raft) sendLogEntries(server int, term int) {
 		req := &AppendEntriesRequest{time.Now().UnixNano() / 1000, rf.me, rf.CurrentTerm, prevIndex, rf.OpLog[prevIndex].Term, entries, rf.commitIndex}
 		resp := &AppendEntriesResponse{}
 		if logIndex <= rf.lastLogIndex {
-			DPrintf(1, "Leader [%d] sending [%d]th entry to peer [%d]: %+v\n", rf.me, logIndex, server, req)
+			DPrintf(1, "Leader [%d] sending [%d]th entry to Server [%d]: %+v\n", rf.me, logIndex, server, req)
 		} else {
-			DPrintf(1, "Leader [%d] sending heartbeat entry to peer [%d]: %+v\n", rf.me, server, req)
+			DPrintf(1, "Leader [%d] sending heartbeat entry to Server [%d]: %+v\n", rf.me, server, req)
 		}
 		rf.mu.Unlock()
 
 		if rf.sendAppendEntries(server, req, resp) == false {
+			DPrintf(1, "Leader [%d] sending append entries RPC to server [%d] failed: %+v\n", rf.me, server, req)
 			continue
 		}
 
@@ -563,7 +567,7 @@ func (rf *Raft) sendLogEntries(server int, term int) {
 			return
 		}
 		if resp.Success {
-			DPrintf(1, "Leader [%d] replicating [%d]th entry to peer [%d] succeed.\n", rf.me, logIndex, server)
+			DPrintf(1, "Leader [%d] replicating [%d]th entry to Server [%d] succeed.\n", rf.me, logIndex, server)
 			rf.matchIndex[server] = prevIndex
 			rf.updateCommitIndex()
 			if rf.nextIndex[server] <= rf.lastLogIndex {
@@ -571,7 +575,7 @@ func (rf *Raft) sendLogEntries(server int, term int) {
 			}
 		} else {
 			if resp.Term > rf.CurrentTerm {
-				DPrintf(1, "Server [%d]'s term[%d] outdated by Server[%d]'s term[%d]. Convert to follower. \n", rf.me, rf.CurrentTerm, rf.me, resp.Term)
+				DPrintf(1, "Server [%d]'s term[%d] outdated by Server[%d]'s term[%d]. Convert to follower. \n", rf.me, rf.CurrentTerm, server, resp.Term)
 				rf.state = Follower
 				rf.CurrentTerm = resp.Term
 				rf.VotedFor = NilCandidateID

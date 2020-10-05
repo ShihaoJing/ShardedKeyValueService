@@ -2,23 +2,11 @@ package kvraft
 
 import (
 	"crypto/rand"
-	"log"
 	"math/big"
 	"time"
 
 	"../labrpc"
 )
-
-const db = 1
-
-// DPrintf helper function to print logs
-func dprintf(level int, format string, a ...interface{}) (n int, err error) {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	if db >= level {
-		log.Printf(format, a...)
-	}
-	return
-}
 
 // Clerk clert struct
 type Clerk struct {
@@ -29,7 +17,7 @@ type Clerk struct {
 }
 
 func nrand() int64 {
-	max := big.NewInt(int64(1) << 62)
+	max := big.NewInt(int64(1) << 20)
 	bigx, _ := rand.Int(rand.Reader, max)
 	x := bigx.Int64()
 	return x
@@ -38,7 +26,7 @@ func nrand() int64 {
 // MakeClerk make a cleark
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	ck := new(Clerk)
-	ck.me = nrand() / 10000000000000
+	ck.me = nrand()
 	ck.leader = 0
 	ck.servers = servers
 	// You'll have to add code here.
@@ -58,18 +46,18 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 //
 func (ck *Clerk) Get(key string) string {
 	value := ""
-	request := GetRequest{key}
+	request := GetRequest{key, ck.me, nrand()}
 	for ; ; ck.leader = ck.leader % len(ck.servers) {
 		reply := GetReply{}
-		dprintf(1, "Clerk[%d] sending Get to server [%d]: key [%v]\n", ck.me, ck.leader, key)
+		DPrintf(1, "Clerk[%d] sending Get to server [%d]: %+v\n", ck.me, ck.leader, request)
 		if ok := ck.servers[ck.leader].Call("KVServer.Get", &request, &reply); ok == true {
-			dprintf(1, "Clerk[%d] received GetReply from server[%d]: %+v\n", ck.me, ck.leader, reply)
+			DPrintf(1, "Clerk[%d] received GetReply from server[%d]: %+v\n", ck.me, ck.leader, reply)
 			if reply.Err == OK || reply.Err == ErrNoKey {
 				value = reply.Value
 				break
 			}
 		} else {
-			dprintf(1, "Clerk[%d]: Get timeout when waiting RPC response from server [%d].\n", ck.me, ck.leader)
+			DPrintf(1, "Clerk[%d]: Get timeout when waiting RPC response from server [%d]: %+v\n", ck.me, ck.leader, request)
 		}
 		ck.leader++
 		time.Sleep(10 * time.Millisecond)
@@ -87,17 +75,17 @@ func (ck *Clerk) Get(key string) string {
 // arguments. and reply must be passed as a pointer.
 //
 func (ck *Clerk) PutAppend(key string, value string, op string) {
-	request := PutAppendRequest{key, value, op}
+	request := PutAppendRequest{key, value, op, ck.me, nrand()}
 	for {
 		reply := PutAppendReply{}
-		dprintf(1, "Clerk[%d] sending PutAppend to server[%d]: op [%v], key [%v], value [%v]\n", ck.me, ck.leader, op, key, value)
+		DPrintf(1, "Clerk[%d] sending PutAppend to server[%d]: %+v\n", ck.me, ck.leader, request)
 		if ok := ck.servers[ck.leader].Call("KVServer.PutAppend", &request, &reply); ok == true {
-			dprintf(1, "Clerk[%d] received PutAppendReply from server [%d]: %+v\n", ck.me, ck.leader, reply)
+			DPrintf(1, "Clerk[%d] received PutAppendReply from server [%d]: %+v\n", ck.me, ck.leader, reply)
 			if reply.Err == OK {
 				break
 			}
 		} else {
-			dprintf(1, "Clerk[%d]: PutAppend timeout when waiting RPC response from server [%d].\n", ck.me, ck.leader)
+			DPrintf(1, "Clerk[%d]: PutAppend timeout when waiting RPC response from server [%d]: %+v\n", ck.me, ck.leader, request)
 		}
 		ck.leader = (ck.leader + 1) % len(ck.servers)
 		time.Sleep(10 * time.Millisecond)

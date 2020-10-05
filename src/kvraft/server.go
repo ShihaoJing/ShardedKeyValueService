@@ -1,7 +1,6 @@
 package kvraft
 
 import (
-	"log"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -10,17 +9,6 @@ import (
 	"../labrpc"
 	"../raft"
 )
-
-const debug = 1
-
-// DPrintf helper function to print logs
-func DPrintf(level int, format string, a ...interface{}) (n int, err error) {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
-	if debug >= level {
-		log.Printf(format, a...)
-	}
-	return
-}
 
 // Operation types
 const (
@@ -31,17 +19,17 @@ const (
 
 // Op Op struct
 type Op struct {
-	// Your definitions here.
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
-	OpType string
-	Key    string
-	Value  string
+	OpType    string
+	Key       string
+	Value     string
+	ClientID  int64
+	RequestID int64
 }
 
 // Result Result struct
 type Result struct {
 	err   Err
+	op    Op
 	value string // value for GET method
 }
 
@@ -56,30 +44,32 @@ type KVServer struct {
 	maxraftstate int // snapshot if log grows this big
 
 	// Your definitions here.
-	kvMap    map[string]string
-	resultCh map[int]chan Result
+	kvMap          map[string]string
+	resultCh       map[int]chan Result
+	lastCommitedOp map[int64]int64
+	killCh         chan interface{}
 }
 
 func (kv *KVServer) waitForCommitedOp() {
-	timer := time.NewTicker(100 * time.Millisecond)
 	for {
-		if kv.killed() {
-			DPrintf(1, "KV[%d] got killed !!!\n", kv.me)
-			return
-		}
 		select {
-		case <-timer.C:
-			DPrintf(2, "KV[%d]: timeout while waiting for commited op.\n", kv.me)
+		case <-kv.killCh:
+			DPrintf(2, "KV[%d] got killed !!!\n", kv.me)
+			return
 		case msg := <-kv.applyCh:
-			DPrintf(1, "KV[%d]: received a commited op: %+v\n", kv.me, msg)
+			DPrintf(1, "KV[%d]: applying a commited op: %+v\n", kv.me, msg)
 			op := msg.Command.(Op)
 			err, val := kv.executeOp(op)
-			result := Result{err, val}
 			kv.mu.Lock()
+			kv.lastCommitedOp[op.ClientID] = op.RequestID
+			result := Result{err, op, val}
 			if resultChan, ok := kv.resultCh[msg.CommandIndex]; ok == true {
+				DPrintf(2, "KV[%d]: acking a executed op: %+v\n", kv.me, msg)
 				resultChan <- result
+				DPrintf(2, "KV[%d]: acking a executed op done: %+v\n", kv.me, msg)
 			}
 			kv.mu.Unlock()
+			DPrintf(2, "KV[%d]: applying a commited op done: %+v\n", kv.me, msg)
 		}
 	}
 }
@@ -112,14 +102,23 @@ func (kv *KVServer) executeOp(op Op) (Err, string) {
 		// 	val = v
 		// }
 	}
+	DPrintf(2, "KV[%d]: executing op done: %+v\n", kv.me, op)
 	return err, val
+}
+
+func match(op1 Op, op2 Op) bool {
+	if op1.ClientID == op2.ClientID && op1.RequestID == op2.RequestID {
+		return true
+	}
+	return false
 }
 
 // Get RPC handler of Get
 func (kv *KVServer) Get(args *GetRequest, reply *GetReply) {
 	// Your code here.
 	DPrintf(1, "KV[%d] received Get: %+v\n", kv.me, args)
-	op := Op{Get, args.Key, ""}
+
+	op := Op{Get, args.Key, "", args.ClientID, args.RequestID}
 	index, _, isLeader := kv.rf.Start(op)
 	if isLeader == false {
 		reply.Err = ErrWrongLeader
@@ -127,18 +126,23 @@ func (kv *KVServer) Get(args *GetRequest, reply *GetReply) {
 	}
 
 	// Revisit in case of failure
-	kv.mu.Lock()
-	kv.resultCh[index] = make(chan Result)
-	kv.mu.Unlock()
+	if _, ok := kv.resultCh[index]; ok == false {
+		kv.resultCh[index] = make(chan Result)
+	}
 
 	timer := time.NewTimer(300 * time.Millisecond)
 	select {
 	case result := <-kv.resultCh[index]:
-		reply.Err = result.err
-		reply.Value = result.value
+		if match(result.op, op) {
+			reply.Err = result.err
+			reply.Value = result.value
+		} else {
+			reply.Err = ErrUnmatchedOp
+		}
 	case <-timer.C:
+		DPrintf(1, "KV[%d]: Get timeout: %+v\n", kv.me, args)
+		delete(kv.resultCh, index)
 		reply.Err = ErrTimeOut
-		DPrintf(1, "KV[%d]: Get timeout!\n", kv.me)
 	}
 	return
 }
@@ -146,7 +150,20 @@ func (kv *KVServer) Get(args *GetRequest, reply *GetReply) {
 // PutAppend RPC handler of PutAppend
 func (kv *KVServer) PutAppend(args *PutAppendRequest, reply *PutAppendReply) {
 	DPrintf(1, "KV[%d] received PutAppend: %+v\n", kv.me, args)
-	op := Op{args.Op, args.Key, args.Value}
+
+	isDuplicate := false
+	kv.mu.Lock()
+	if kv.lastCommitedOp[args.ClientID] == args.RequestID {
+		isDuplicate = true
+	}
+	kv.mu.Unlock()
+	if isDuplicate == true {
+		DPrintf(1, "KV[%d] received duplicate PutAppend: %+v\n", kv.me, args)
+		reply.Err = OK
+		return
+	}
+
+	op := Op{args.Op, args.Key, args.Value, args.ClientID, args.RequestID}
 	index, _, isLeader := kv.rf.Start(op)
 	if isLeader == false {
 		reply.Err = ErrWrongLeader
@@ -154,17 +171,22 @@ func (kv *KVServer) PutAppend(args *PutAppendRequest, reply *PutAppendReply) {
 	}
 
 	// Revisit in case of failure
-	kv.mu.Lock()
-	kv.resultCh[index] = make(chan Result)
-	kv.mu.Unlock()
+	if _, ok := kv.resultCh[index]; ok == false {
+		kv.resultCh[index] = make(chan Result)
+	}
 
 	timer := time.NewTimer(300 * time.Millisecond)
 	select {
 	case result := <-kv.resultCh[index]:
-		reply.Err = result.err
+		if match(result.op, op) {
+			reply.Err = result.err
+		} else {
+			reply.Err = ErrUnmatchedOp
+		}
 	case <-timer.C:
+		DPrintf(1, "KV[%d]: PutAppend timeout:%+v\n", kv.me, args)
+		delete(kv.resultCh, index)
 		reply.Err = ErrTimeOut
-		DPrintf(1, "KV[%d]: PutAppend timeout!\n", kv.me)
 	}
 	return
 }
@@ -181,6 +203,7 @@ func (kv *KVServer) PutAppend(args *PutAppendRequest, reply *PutAppendReply) {
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
+	kv.killCh <- "Kill KV"
 	// Your code here, if desired.
 }
 
@@ -220,6 +243,8 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 
 	kv.kvMap = make(map[string]string)
 	kv.resultCh = make(map[int]chan Result)
+	kv.lastCommitedOp = make(map[int64]int64)
+	kv.killCh = make(chan interface{})
 	go kv.waitForCommitedOp()
 
 	return kv
